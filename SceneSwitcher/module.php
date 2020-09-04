@@ -180,7 +180,18 @@ class SceneSwitcher extends IPSModule {
 			return;
 		}
 		
+		if ( ($scenes[0]->Status) && (! GetValue($this->ReadPropertyInteger("TargetStatusVariableId"))) ) {
+			
+			$this->LogMessage("Scene requests device to be turned on but it is off. Turning it on","DEBUG");
+			RequestAction($this->ReadPropertyInteger("TargetStatusVariableId"), true);
+		}
 		
+		if ( (! $scenes[0]->Status) && (GetValue($this->ReadPropertyInteger("TargetStatusVariableId"))) ) {
+			
+			$this->LogMessage("Scene requests device to be turned off but it is on. Turning it off","DEBUG");
+			RequestAction($this->ReadPropertyInteger("TargetStatusVariableId"), false);
+			return;
+		}
 	}
 
 }
