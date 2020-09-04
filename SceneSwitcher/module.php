@@ -22,7 +22,10 @@ class SceneSwitcher extends IPSModule {
 		$this->RegisterPropertyString("Sender","SceneSwitcher");
 		$this->RegisterPropertyInteger("RefreshInterval",0);
 		$this->RegisterPropertyBoolean("DebugOutput",false);
-		
+		$this->RegisterPropertyInteger("TargetStatusVariableId",0);
+		$this->RegisterPropertyInteger("TargetIntensityVariableId",0);
+		$this->RegisterPropertyInteger("TargetColorVariableId",0);
+		$this->RegisterPropertyString("Scenes","");
 		
 		// Variables
 		$this->RegisterVariableBoolean("Status","Status","~Switch");
@@ -62,6 +65,49 @@ class SceneSwitcher extends IPSModule {
 		// Add the Elements
 		$form['elements'][] = Array("type" => "NumberSpinner", "name" => "RefreshInterval", "caption" => "Refresh Interval");
 		$form['elements'][] = Array("type" => "CheckBox", "name" => "DebugOutput", "caption" => "Enable Debug Output");
+		$form['elements'][] = Array("type" => "SelectVariable", "name" => "TargetStatusVariableId", "caption" => "Target Status Variable");
+		$form['elements'][] = Array("type" => "SelectVariable", "name" => "TargetIntensityVariableId", "caption" => "Target Intensity Variable");
+		$form['elements'][] = Array("type" => "SelectVariable", "name" => "TargetColorVariableId", "caption" => "Target Color Variable");
+		
+		$sceneColumns = Array(
+			Array(
+				"caption" => "Scene Name",
+				"name" => "Name",
+				"width" => "200px",
+				"edit" => Array("type" => "ValidationTextBox"),
+				"add" => "unnamed"
+			),
+			Array(
+				"caption" => "Device Status",
+				"name" => "Status",
+				"width" => "100px",
+				"edit" => Array("type" => "CheckBox"),
+				"add" => true
+			),
+			Array(
+				"caption" => "Device Intensity",
+				"name" => "Intensity",
+				"width" => "150px",
+				"edit" => Array("type" => "NumberSpinner"),
+				"add" => 100
+			),
+			Array(
+				"caption" => "Device Color",
+				"name" => "Color",
+				"width" => "150px",
+				"edit" => Array("type" => "ValidationTextBox"),
+				"add" => ""
+			)
+		);
+		$form['elements'][] = Array(
+			"type" => "List", 
+			"columns" => $sceneColumns, 
+			"name" => "Scenes", 
+			"caption" => "Scene List", 
+			"add" => true, 
+			"delete" => true,
+			"rowCount" => 10
+		);
 		
 		// Add the buttons for the test center
 		$form['actions'][] = Array(	"type" => "Button", "label" => "Refresh", "onClick" => 'SCENESWITCH_RefreshInformation($id);');
