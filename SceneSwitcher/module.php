@@ -158,7 +158,7 @@ class SceneSwitcher extends IPSModule {
 	public function TurnOff() {
 		
 		$this->LogMessage("Turning device off","DEBUG");
-		RequestAction($this->ReadPropertyInteger("TargetStatusVariableId"));
+		RequestAction($this->ReadPropertyInteger("TargetStatusVariableId"), false);
 		SetValue($this->GetIDForIdent("Status"), false);
 	}
 
