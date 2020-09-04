@@ -173,6 +173,14 @@ class SceneSwitcher extends IPSModule {
 			$this->LogMessage("No Scenes are defined. Unable to turn on SceneSwitcher","ERROR");
 			return;
 		}
+		
+		if (count($scenes) == 0) {
+			
+			$this->LogMessage("No Scenes are defined. Unable to turn on SceneSwitcher","ERROR");
+			return;
+		}
+		
+		
 	}
 
 }
