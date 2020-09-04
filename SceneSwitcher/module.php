@@ -229,7 +229,7 @@ class SceneSwitcher extends IPSModule {
 			RequestAction($this->ReadPropertyInteger("TargetColorVariableId"), $scenes[$sceneIndex]->Color);
 		}
 		
-		SetValue($this->GetIDForIdent("SceneNumber"), $sceneIndex);
+		SetValue($this->GetIDForIdent("SceneNumber"), $sceneNumber);
 		SetValue($this->GetIDForIdent("SceneName"), $scenes[$sceneIndex]->Name);
 	}
 	
