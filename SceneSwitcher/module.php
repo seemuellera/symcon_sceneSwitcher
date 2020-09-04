@@ -27,6 +27,10 @@ class SceneSwitcher extends IPSModule {
 		$this->RegisterPropertyInteger("TargetColorVariableId",0);
 		$this->RegisterPropertyInteger("NextSceneInterval",0);
 		$this->RegisterPropertyBoolean("RepeatOnLastScene",false);
+		$this->RegisterPropertyInteger("TransitionStepInterval",0);
+		$this->RegisterPropertyInteger("TransitionSteps",0);
+		$this->RegisterPropertyInteger("CurrentTransitionStep",0);
+		$this->RegisterPropertyString("Transition");
 		$this->RegisterPropertyString("Scenes","");
 		
 		// Variables
@@ -78,6 +82,8 @@ class SceneSwitcher extends IPSModule {
 		$form['elements'][] = Array("type" => "Label", "name" => "HeadingScenes", "caption" => "Scene Settings");
 		$form['elements'][] = Array("type" => "NumberSpinner", "name" => "NextSceneInterval", "caption" => "Switch Scene Interval");
 		$form['elements'][] = Array("type" => "CheckBox", "name" => "RepeatOnLastScene", "caption" => "Repeat after last Scene");
+		$form['elements'][] = Array("type" => "NumberSpinner", "name" => "TransitionSteps", "caption" => "Number of Steps for each transition");
+		$form['elements'][] = Array("type" => "NumberSpinner", "name" => "TransitionStepInterval", "caption" => "Interval between transition steps");
 		
 		$sceneColumns = Array(
 			Array(
