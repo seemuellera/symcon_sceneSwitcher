@@ -143,7 +143,7 @@ class SceneSwitcher extends IPSModule {
 			case "Status":
 				if ($Value) {
 				
-					SetValue($this->GetIDForIdent($Ident), $Value);
+					$this->TurnOn();
 				}
 				else {
 					
@@ -160,6 +160,18 @@ class SceneSwitcher extends IPSModule {
 		$this->LogMessage("Turning device off","DEBUG");
 		RequestAction($this->ReadPropertyInteger("TargetStatusVariableId"), false);
 		SetValue($this->GetIDForIdent("Status"), false);
+	}
+	
+	public function TurnOn() {
+		
+		$scenesJson = $this->ReadPropertyString("Scenes");
+		$scenes = json_decode($scenesJson);
+		
+		if (! is_array($scenes)) {
+			
+			$this->LogMessage("No Scenes are defined. Unable to turn on SceneSwitcher","ERROR");
+			return;
+		}
 	}
 
 }
