@@ -140,11 +140,25 @@ class SceneSwitcher extends IPSModule {
 		switch ($Ident) {
 		
 			case "Status":
-				SetValue($this->GetIDForIdent($Ident), $Value);
+				if ($Value) {
+				
+					SetValue($this->GetIDForIdent($Ident), $Value);
+				}
+				else {
+					
+					$this->TurnOff();
+				}
 				break;
 			default:
 				throw new Exception("Invalid Ident");
 		}
+	}
+	
+	public function TurnOff() {
+		
+		$this->LogMessage("Turning device off","DEBUG");
+		RequestAction($this->ReadPropertyInteger("TargetStatusVariableId"));
+		SetValue($this->GetIDForIdent("Status"), false);
 	}
 
 }
