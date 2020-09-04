@@ -111,6 +111,7 @@ class SceneSwitcher extends IPSModule {
 		
 		// Add the buttons for the test center
 		$form['actions'][] = Array(	"type" => "Button", "label" => "Refresh", "onClick" => 'SCENESWITCH_RefreshInformation($id);');
+		$form['actions'][] = Array(	"type" => "Button", "label" => "Turn Off", "onClick" => 'SCENESWITCH_TurnOff($id);');
 
 		// Return the completed form
 		return json_encode($form);
