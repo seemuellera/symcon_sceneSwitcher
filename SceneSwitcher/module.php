@@ -170,7 +170,7 @@ class SceneSwitcher extends IPSModule {
 	
 	public function TurnOn() {
 		
-		$this->ActivateSceneNumber(0);
+		$this->ActivateSceneNumber(1);
 	}
 	
 	public function ActivateSceneNumber($sceneNumber) {
