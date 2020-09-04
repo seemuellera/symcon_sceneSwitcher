@@ -1,0 +1,14 @@
+{
+  "id": "{C3A55620-96D7-417D-A895-1862DC6EA426}",
+  "name": "SceneSwitcher",
+  "type": 3,
+  "vendor": "Andreas",
+  "aliases": 
+  [
+	  "SceneSwitcher"
+  ],
+  "parentRequirements": [],
+  "childRequirements": [],
+  "implemented": [],
+  "prefix": "SCENESWITCH"
+}
