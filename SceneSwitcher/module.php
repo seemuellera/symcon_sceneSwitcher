@@ -25,6 +25,7 @@ class SceneSwitcher extends IPSModule {
 		$this->RegisterPropertyInteger("TargetStatusVariableId",0);
 		$this->RegisterPropertyInteger("TargetIntensityVariableId",0);
 		$this->RegisterPropertyInteger("TargetColorVariableId",0);
+		$this->RegisterPropertyBoolean("RepeatOnLastScene",false);
 		$this->RegisterPropertyString("Scenes","");
 		
 		// Variables
@@ -70,6 +71,7 @@ class SceneSwitcher extends IPSModule {
 		$form['elements'][] = Array("type" => "SelectVariable", "name" => "TargetStatusVariableId", "caption" => "Target Status Variable");
 		$form['elements'][] = Array("type" => "SelectVariable", "name" => "TargetIntensityVariableId", "caption" => "Target Intensity Variable");
 		$form['elements'][] = Array("type" => "SelectVariable", "name" => "TargetColorVariableId", "caption" => "Target Color Variable");
+		$form['elements'][] = Array("type" => "CheckBox", "name" => "RepeatOnLastScene", "caption" => "Repeat after last Scene");
 		
 		$sceneColumns = Array(
 			Array(
@@ -115,6 +117,7 @@ class SceneSwitcher extends IPSModule {
 		$form['actions'][] = Array(	"type" => "Button", "label" => "Refresh", "onClick" => 'SCENESWITCH_RefreshInformation($id);');
 		$form['actions'][] = Array(	"type" => "Button", "label" => "Turn Off", "onClick" => 'SCENESWITCH_TurnOff($id);');
 		$form['actions'][] = Array(	"type" => "Button", "label" => "Turn On", "onClick" => 'SCENESWITCH_TurnOn($id);');
+		$form['actions'][] = Array(	"type" => "Button", "label" => "Next Scene", "onClick" => 'SCENESWITCH_NextScene($id);');
 
 		// Return the completed form
 		return json_encode($form);
@@ -245,6 +248,36 @@ class SceneSwitcher extends IPSModule {
 		else {
 			
 			return count($scenes);
+		}
+	}
+	
+	public function NextScene() {
+		
+		if (! GetValue($this->GetIDForIdent("Status"))) {
+			
+			$this->LogMessage("SceneSwitcher is not active. Unable to switch to next scene","ERROR");
+			return;
+		}
+		
+		$nextScene = GetValue($this->GetIDForIdent("SceneNumber")) + 1;
+		
+		if ($nextScene > $this->GetNumberOfScenes()) {
+			
+			if ($this->ReadPropertyBoolean("RepeatOnLastScene")) {
+				
+				$this->LogMessage("Already at last scene. Restarting at 1 as repeat is active", "DEBUG");
+				$this->ActivateSceneNumber(1);
+			}
+			else {
+			
+				$this->LogMessage("Already at last scene. Turning off as repeat is inactive", "DEBUG");
+				$this->TurnOff();
+			}
+		}
+		else {
+			
+			$this->LogMessage("Switching to next Scene $nextScene", "DEBUG");
+			$this->ActivateSceneNumber($nextScene);
 		}
 	}
 }
