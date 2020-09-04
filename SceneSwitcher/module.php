@@ -29,6 +29,8 @@ class SceneSwitcher extends IPSModule {
 		
 		// Variables
 		$this->RegisterVariableBoolean("Status","Status","~Switch");
+		$this->RegisterVariableInteger("SceneNumber","Active Scene Number");
+		$this->RegisterVariableString("SceneName","Active Scene Name");
 		
 		// Default Actions
 		$this->EnableAction("Status");
@@ -161,49 +163,88 @@ class SceneSwitcher extends IPSModule {
 		$this->LogMessage("Turning device off","DEBUG");
 		RequestAction($this->ReadPropertyInteger("TargetStatusVariableId"), false);
 		SetValue($this->GetIDForIdent("Status"), false);
+		
+		SetValue($this->GetIDForIdent("SceneNumber"), 0);
+		SetValue($this->GetIDForIdent("SceneName"), "");
 	}
 	
 	public function TurnOn() {
+		
+		$this->ActivateSceneNumber(0);
+	}
+	
+	public function ActivateSceneNumber($sceneNumber) {
 		
 		$scenesJson = $this->ReadPropertyString("Scenes");
 		$scenes = json_decode($scenesJson);
 		
 		if (! is_array($scenes)) {
 			
-			$this->LogMessage("No Scenes are defined. Unable to turn on SceneSwitcher","ERROR");
+			$this->LogMessage("No Scenes are defined. Unable to activate Scene Number " . $sceneNumber,"ERROR");
 			return;
 		}
 		
 		if (count($scenes) == 0) {
 			
-			$this->LogMessage("No Scenes are defined. Unable to turn on SceneSwitcher","ERROR");
+			$this->LogMessage("No Scenes are defined. Unable to activate Scene Number " . $sceneNumber,"ERROR");
 			return;
 		}
 		
-		if ( ($scenes[0]->Status) && (! GetValue($this->ReadPropertyInteger("TargetStatusVariableId"))) ) {
+		if ($sceneNumber <= 0) {
+			
+			$this->LogMessage("Scene number must be positive. You specified " . $sceneNumber,"ERROR");
+			return;
+		}
+		
+		if ($sceneNumber > $this->GetNumberOfScenes() ) {
+			
+			$this->LogMessage("Scene number refers to a scene that does not exist. You specified " . $sceneNumber . " but there are only " . $this->GetNumberOfScenes() . " scenes defined","ERROR");
+			return;
+		}
+		
+		$sceneIndex = $sceneNumber - 1;
+		
+		if ( ($scenes[$sceneIndex]->Status) && (! GetValue($this->ReadPropertyInteger("TargetStatusVariableId"))) ) {
 			
 			$this->LogMessage("Scene requests device to be turned on but it is off. Turning it on","DEBUG");
 			RequestAction($this->ReadPropertyInteger("TargetStatusVariableId"), true);
 		}
 		
-		if ( (! $scenes[0]->Status) && (GetValue($this->ReadPropertyInteger("TargetStatusVariableId"))) ) {
+		if ( (! $scenes[$sceneIndex]->Status) && (GetValue($this->ReadPropertyInteger("TargetStatusVariableId"))) ) {
 			
 			$this->LogMessage("Scene requests device to be turned off but it is on. Turning it off","DEBUG");
 			RequestAction($this->ReadPropertyInteger("TargetStatusVariableId"), false);
 			return;
 		}
 		
-		if ($scenes[0]->Intensity != GetValue($this->ReadPropertyInteger("TargetIntensityVariableId")) ) {
+		if ($scenes[$sceneIndex]->Intensity != GetValue($this->ReadPropertyInteger("TargetIntensityVariableId")) ) {
 			
-			$this->LogMessage("Adjusting Intensity to level " . $scenes[0]->Intensity, "DEBUG");
-			RequestAction($this->ReadPropertyInteger("TargetIntensityVariableId"), $scenes[0]->Intensity);
+			$this->LogMessage("Adjusting Intensity to level " . $scenes[$sceneIndex]->Intensity, "DEBUG");
+			RequestAction($this->ReadPropertyInteger("TargetIntensityVariableId"), $scenes[$sceneIndex]->Intensity);
 		}
 		
-		if ($scenes[0]->Color != GetValue($this->ReadPropertyInteger("TargetColorVariableId")) ) {
+		if ($scenes[$sceneIndex]->Color != GetValue($this->ReadPropertyInteger("TargetColorVariableId")) ) {
 			
-			$this->LogMessage("Adjusting Color to value " . $scenes[0]->Color, "DEBUG");
-			RequestAction($this->ReadPropertyInteger("TargetColorVariableId"), $scenes[0]->Color);
+			$this->LogMessage("Adjusting Color to value " . $scenes[$sceneIndex]->Color, "DEBUG");
+			RequestAction($this->ReadPropertyInteger("TargetColorVariableId"), $scenes[$sceneIndex]->Color);
+		}
+		
+		SetValue($this->GetIDForIdent("SceneNumber"), $sceneIndex);
+		SetValue($this->GetIDForIdent("SceneName"), $scenes[$sceneIndex]->Name);
+	}
+	
+	public function GetNumberOfScenes() {
+		
+		$scenesJson = $this->ReadPropertyString("Scenes");
+		$scenes = json_decode($scenesJson);
+		
+		if (! is_array($scenes)) {
+			
+			return 0;
+		}
+		else {
+			
+			return count($scenes);
 		}
 	}
-
 }
