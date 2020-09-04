@@ -25,6 +25,7 @@ class SceneSwitcher extends IPSModule {
 		$this->RegisterPropertyInteger("TargetStatusVariableId",0);
 		$this->RegisterPropertyInteger("TargetIntensityVariableId",0);
 		$this->RegisterPropertyInteger("TargetColorVariableId",0);
+		$this->RegisterPropertyInteger("NextSceneInterval",0);
 		$this->RegisterPropertyBoolean("RepeatOnLastScene",false);
 		$this->RegisterPropertyString("Scenes","");
 		
@@ -38,6 +39,7 @@ class SceneSwitcher extends IPSModule {
 		
 		// Timer
 		$this->RegisterTimer("RefreshInformation", 0 , 'SCENESWITCH_RefreshInformation($_IPS[\'TARGET\']);');
+		$this->RegisterTimer("NextScene", 0 , 'SCENESWITCH_NextScene($_IPS[\'TARGET\']);');
     }
 
 	public function Destroy() {
@@ -169,12 +171,18 @@ class SceneSwitcher extends IPSModule {
 		
 		SetValue($this->GetIDForIdent("SceneNumber"), 0);
 		SetValue($this->GetIDForIdent("SceneName"), "");
+		
+		$this->SetTimerInterval("NextScene", 0);
 	}
 	
 	public function TurnOn() {
 		
 		SetValue($this->GetIDForIdent("Status"), true);
 		$this->ActivateSceneNumber(1);
+		
+		$newInterval = $this->ReadPropertyInteger("NextSceneInterval") * 1000;
+		$this->SetTimerInterval("NextScene", $newInterval);
+
 	}
 	
 	public function ActivateSceneNumber($sceneNumber) {
