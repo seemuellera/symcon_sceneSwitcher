@@ -192,6 +192,12 @@ class SceneSwitcher extends IPSModule {
 			RequestAction($this->ReadPropertyInteger("TargetStatusVariableId"), false);
 			return;
 		}
+		
+		if ($scenes[0]->Intensity != GetValue($this->ReadPropertyInteger("TargetIntensityVariableId")) ) {
+			
+			$this->LogMessage("Adjusting Intensity to level " . $scenes[0]->Intensity, "DEBUG");
+			RequestAction($this->ReadPropertyInteger("TargetIntensityVariableId"), $scenes[0]->Intensity);
+		}
 	}
 
 }
