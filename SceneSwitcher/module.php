@@ -202,21 +202,6 @@ class SceneSwitcher extends IPSModule {
 	
 	public function ActivateSceneNumber(int $sceneNumber) {
 		
-		$scenesJson = $this->ReadPropertyString("Scenes");
-		$scenes = json_decode($scenesJson);
-		
-		if (! is_array($scenes)) {
-			
-			$this->LogMessage("No Scenes are defined. Unable to activate Scene Number " . $sceneNumber,"ERROR");
-			return;
-		}
-		
-		if (count($scenes) == 0) {
-			
-			$this->LogMessage("No Scenes are defined. Unable to activate Scene Number " . $sceneNumber,"ERROR");
-			return;
-		}
-		
 		if ($sceneNumber <= 0) {
 			
 			$this->LogMessage("Scene number must be positive. You specified " . $sceneNumber,"ERROR");
@@ -229,41 +214,69 @@ class SceneSwitcher extends IPSModule {
 			return;
 		}
 		
-		$sceneIndex = $sceneNumber - 1;
-		
-		if ( ($scenes[$sceneIndex]->Status) && (! GetValue($this->ReadPropertyInteger("TargetStatusVariableId"))) ) {
-			
-			$this->LogMessage("Scene requests device to be turned on but it is off. Turning it on","DEBUG");
-			RequestAction($this->ReadPropertyInteger("TargetStatusVariableId"), true);
-		}
-		
-		if ( (! $scenes[$sceneIndex]->Status) && (GetValue($this->ReadPropertyInteger("TargetStatusVariableId"))) ) {
-			
-			$this->LogMessage("Scene requests device to be turned off but it is on. Turning it off","DEBUG");
-			RequestAction($this->ReadPropertyInteger("TargetStatusVariableId"), false);
-			return;
-		}
-		
-		if ($scenes[$sceneIndex]->Intensity) {
-			
-			if ($scenes[$sceneIndex]->Intensity != GetValue($this->ReadPropertyInteger("TargetIntensityVariableId")) ) {
-				
-				$this->LogMessage("Adjusting Intensity to level " . $scenes[$sceneIndex]->Intensity, "DEBUG");
-				RequestAction($this->ReadPropertyInteger("TargetIntensityVariableId"), $scenes[$sceneIndex]->Intensity);
-			}
-		}
-		
-		if ($scenes[$sceneIndex]->Color) {
-			
-			if ($scenes[$sceneIndex]->Color != GetValue($this->ReadPropertyInteger("TargetColorVariableId")) ) {
-				
-				$this->LogMessage("Adjusting Color to value " . $scenes[$sceneIndex]->Color, "DEBUG");
-				RequestAction($this->ReadPropertyInteger("TargetColorVariableId"), $scenes[$sceneIndex]->Color);
-			}
-		}
+		$scene = $this->GetScene($sceneNumber);
 		
 		SetValue($this->GetIDForIdent("SceneNumber"), $sceneNumber);
-		SetValue($this->GetIDForIdent("SceneName"), $scenes[$sceneIndex]->Name);
+		SetValue($this->GetIDForIdent("SceneName"), $scene['Name']);
+		
+		// We check first if the device needs to be turned off. If this is the case we execute this immediately, then stop
+		if (! $scene['Status']) {
+			
+			if (GetValue($this->ReadPropertyInteger("TargetStatusVariableId"))) {
+				
+				$this->LogMessage("Scene requests device to be turned off but it is on. Turning it off","DEBUG");
+				RequestAction($this->ReadPropertyInteger("TargetStatusVariableId"), false);
+				return;
+			}
+		}
+		
+		// Setting the color also sets the intensity and turns the device on is needed. So we do this next.
+		if ($scene['Color') {
+			
+			if ($this->ReadPropertyInteger("TargetColorVariableId")) {
+				
+				if ($scene['Color'] != GetValue($this->ReadPropertyInteger("TargetColorVariableId")) ) {
+					
+					$this->LogMessage("Adjusting Color to value " . $scene['Color'], "DEBUG");
+					RequestAction($this->ReadPropertyInteger("TargetColorVariableId"), $scene['Color']);
+					return;
+				}
+			}
+			else {
+				
+				$this->LogMessage("Scene asks for a color to be set but no Color Variable was defined in the instance configuration","ERROR");
+			}
+		}
+		
+		// If no color was defined we proceed with intensity
+		if ($scene['Intensity') {
+			
+			if ($this->ReadPropertyInteger("TargetIntensityVariableId")) {
+				
+				if ($scene['Intensity'] != GetValue($this->ReadPropertyInteger("TargetIntensityVariableId")) ) {
+					
+					$this->LogMessage("Adjusting Intensity to value " . $scene['Intensity'], "DEBUG");
+					RequestAction($this->ReadPropertyInteger("TargetIntensityVariableId"), $scene['Intensity']);
+					return;
+				}
+			}
+			else {
+				
+				$this->LogMessage("Scene asks for intensity to be set but no Intensity Variable was defined in the instance configuration","ERROR");
+			}
+		}
+		
+		
+		// Last option: Turn it on
+		if ($scene['Status']) {
+			
+			if (GetValue($this->ReadPropertyInteger("TargetStatusVariableId"))) {
+				
+				$this->LogMessage("Scene requests device to be turned on but it is off. Turning it on","DEBUG");
+				RequestAction($this->ReadPropertyInteger("TargetStatusVariableId"), true);
+				return;
+			}
+		}
 	}
 	
 	public function GetNumberOfScenes() {
@@ -490,7 +503,7 @@ class SceneSwitcher extends IPSModule {
 			
 			$colorHex = dechex($transition[$i]['Color']);
 			
-			if (GetValue($this->GetIDForIdent("TransitionStepNumber")) == $i) {
+			if ( (GetValue($this->GetIDForIdent("TransitionStepNumber")) == $i) && GetValue($this->GetIDForIdent("TransitionStatus") ) ) {
 				
 				$bgcolor_step = "red";
 			}
