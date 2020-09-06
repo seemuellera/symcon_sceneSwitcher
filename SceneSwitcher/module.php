@@ -252,7 +252,7 @@ class SceneSwitcher extends IPSModule {
 			$this->RenderTransitionToHtml();
 			
 			SetValue($this->GetIDForIdent("TransitionStatus"), true);
-			SetValue($this->GetIDForIdent("TransitionStepNumber", 1);
+			SetValue($this->GetIDForIdent("TransitionStepNumber"), 1);
 			
 			$currentStep = $this->GetTransitionStep(1);
 			$this->SetTargetDevice($currentStep);
@@ -280,7 +280,7 @@ class SceneSwitcher extends IPSModule {
 			$this->LogMessage("Cannot proceed transition as the current step is out of bounds. deactivating transitions","DEBUG");
 			
 			SetValue($this->GetIDForIdent("TransitionStatus"), false);
-			SetValue($this->GetIDForIdent("TransitionStepNumber", 0);
+			SetValue($this->GetIDForIdent("TransitionStepNumber"), 0);
 			SetValue($this->GetIDForIdent("Transition"), "");
 			SetValue($this->GetIDForIdent("TransitionJSON"), "");
 			
@@ -302,7 +302,7 @@ class SceneSwitcher extends IPSModule {
 		if ($nextTransitionStepNumber == $this->GetNumberOfTransitions) {
 			
 			SetValue($this->GetIDForIdent("TransitionStatus"), false);
-			SetValue($this->GetIDForIdent("TransitionStepNumber", 0);
+			SetValue($this->GetIDForIdent("TransitionStepNumber"), 0);
 			SetValue($this->GetIDForIdent("Transition"), "");
 			SetValue($this->GetIDForIdent("TransitionJSON"), "");
 			
@@ -310,7 +310,7 @@ class SceneSwitcher extends IPSModule {
 		}
 		else {
 			
-			SetValue($this->GetIDForIdent("TransitionStepNumber", $nextTransitionStepNumber);
+			SetValue($this->GetIDForIdent("TransitionStepNumber"), $nextTransitionStepNumber);
 		}
 	}
 		
