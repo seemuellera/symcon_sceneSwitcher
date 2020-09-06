@@ -215,8 +215,13 @@ class SceneSwitcher extends IPSModule {
 		}
 		
 		$scene = $this->GetScene($sceneNumber);
+		$this->SetTargetDevice($scene);
+	}
 		
-		SetValue($this->GetIDForIdent("SceneNumber"), $sceneNumber);
+		
+	protected function SetTargetDevice($scene) {
+		
+		SetValue($this->GetIDForIdent("SceneNumber"), $scene['Number']);
 		SetValue($this->GetIDForIdent("SceneName"), $scene['Name']);
 		
 		// We check first if the device needs to be turned off. If this is the case we execute this immediately, then stop
