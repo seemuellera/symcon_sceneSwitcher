@@ -403,7 +403,7 @@ class SceneSwitcher extends IPSModule {
 		$transitionSteps = $this->ReadPropertyInteger("TransitionSteps");
 		
 		$deltaIntensity = $nextScene['Intensity'] - $currentScene['Intensity'];
-		$stepsizeIntensity = round($deltaIntensity / $transitionSteps);
+		$stepsizeIntensity = $deltaIntensity / $transitionSteps;
 		
 		$transition[0]['Status'] = $currentScene['Status'];
 		$transition[0]['Intensity'] = $currentScene['Intensity'];
@@ -431,7 +431,7 @@ class SceneSwitcher extends IPSModule {
 				$transition[$i]['Status'] = true;
 			}
 			
-			$transition[$i]['Intensity'] = $currentScene['Intensity'] + ($stepsizeIntensity * $i);
+			$transition[$i]['Intensity'] = round($currentScene['Intensity'] + ($stepsizeIntensity * $i) );
 		}
 
 		$transition[$transitionSteps]['Status'] = $nextScene['Status'];
