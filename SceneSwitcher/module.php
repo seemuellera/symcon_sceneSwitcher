@@ -231,7 +231,7 @@ class SceneSwitcher extends IPSModule {
 		}
 		
 		// Setting the color also sets the intensity and turns the device on is needed. So we do this next.
-		if ($scene['Color') {
+		if ($scene['Color']) {
 			
 			if ($this->ReadPropertyInteger("TargetColorVariableId")) {
 				
@@ -249,7 +249,7 @@ class SceneSwitcher extends IPSModule {
 		}
 		
 		// If no color was defined we proceed with intensity
-		if ($scene['Intensity') {
+		if ($scene['Intensity']) {
 			
 			if ($this->ReadPropertyInteger("TargetIntensityVariableId")) {
 				
