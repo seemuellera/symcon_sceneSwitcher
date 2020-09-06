@@ -214,8 +214,29 @@ class SceneSwitcher extends IPSModule {
 			return;
 		}
 		
-		$scene = $this->GetScene($sceneNumber);
-		$this->SetTargetDevice($scene);
+		// This is a fresh turn on 
+		if (GetValue($this->GetIDForIdent("SceneNumber")) == 0) {
+		
+			$scene = $this->GetScene($sceneNumber);
+			$this->SetTargetDevice($scene);
+			
+			SetValue($this->GetIDForIdent("Transition"), "");
+			SetValue($this->GetIDForIdent("TransitionJSON"), "");
+			
+			return;
+		}
+		
+		// No Transition Steps are needed in this case
+		if ($this->ReadPropertyInteger("TransitionSteps") <= 1) {
+			
+			$scene = $this->GetScene($sceneNumber);
+			$this->SetTargetDevice($scene);
+			
+			SetValue($this->GetIDForIdent("Transition"), "");
+			SetValue($this->GetIDForIdent("TransitionJSON"), "");
+			
+			return;
+		}
 	}
 		
 		
