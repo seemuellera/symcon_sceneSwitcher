@@ -304,6 +304,11 @@ class SceneSwitcher extends IPSModule {
 	
 	public function GetCurrentScene() {
 		
+		if (! GetValue($this->GetIDForIdent("Status"))) {
+			
+			return false;
+		}
+		
 		$scenesJson = $this->ReadPropertyString("Scenes");
 		$scenes = json_decode($scenesJson);
 		
@@ -321,12 +326,14 @@ class SceneSwitcher extends IPSModule {
 		
 		$sceneIndex = GetValue($this->GetIDForIdent("SceneNumber"));
 		
+		$sceneNumbbbbbbbber = $sceneIndex + 1
+		
 		$currentScene = Array(
 			"Status" => $scenes[$sceneIndex]->Status,
 			"Intensity" => $scenes[$sceneIndex]->Intensity,
 			"Color" => $scenes[$sceneIndex]->Color,
 			"Name" => $scenes[$sceneIndex]->Name,
-			"Number" => $sceneIndex
+			"Number" => $sceneNumber
 		);
 		
 		return $currentScene;
@@ -334,10 +341,15 @@ class SceneSwitcher extends IPSModule {
 	
 	public function GetNextScene() {
 		
+		if (! GetValue($this->GetIDForIdent("Status"))) {
+			
+			return false;
+		}
+		
 		$currentSceneIndex = GetValue($this->GetIDForIdent("SceneNumber"));
 		$sceneIndex = $currentSceneIndex + 1;
 		
-		if ($sceneIndex > $this->GetNumberOfScenes() ) {
+		if ($sceneIndex >= $this->GetNumberOfScenes() ) {
 			
 			if ($this->ReadPropertyBoolean("RepeatOnLastScene")) {
 				
@@ -364,12 +376,14 @@ class SceneSwitcher extends IPSModule {
 			return;
 		}
 		
+		$sceneNumber = $sceneIndex + 1
+		
 		$currentScene = Array(
 			"Status" => $scenes[$sceneIndex]->Status,
 			"Intensity" => $scenes[$sceneIndex]->Intensity,
 			"Color" => $scenes[$sceneIndex]->Color,
 			"Name" => $scenes[$sceneIndex]->Name,
-			"Number" => $sceneIndex
+			"Number" => $sceneNumber
 		);
 		
 		return $currentScene;
