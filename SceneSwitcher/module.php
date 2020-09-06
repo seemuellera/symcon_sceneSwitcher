@@ -467,7 +467,7 @@ class SceneSwitcher extends IPSModule {
 	
 	protected function RenderTransitionToHtml() {
 		
-		$transition = json_decode(ReadValue($this->GetIDForIdent("TransitionJSON")));
+		$transition = json_decode(GetValue($this->GetIDForIdent("TransitionJSON")));
 		
 		$htmlText = '<table border="1px">' .
 						'<thead>' .
