@@ -514,7 +514,7 @@ class SceneSwitcher extends IPSModule {
 	
 	protected function GetTransitionStep($stepNumber) {
 		
-		$transitionJson = GetValue($this->GetIDForIdent("TransitionJSON");
+		$transitionJson = GetValue($this->GetIDForIdent("TransitionJSON"));
 		$transition = json_decode($transitionJson, true);
 		
 		if (! is_array($transition)) {
