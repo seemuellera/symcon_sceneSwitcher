@@ -492,11 +492,11 @@ class SceneSwitcher extends IPSModule {
 			
 			if (GetValue($this->GetIDForIdent("TransitionStepNumber")) == $i) {
 				
-				bgcolor_step = "red";
+				$bgcolor_step = "red";
 			}
 			else {
 				
-				bgcolor_step = "transparent";
+				$bgcolor_step = "transparent";
 			}
 			
 			$htmlText .= '<tr>' .
