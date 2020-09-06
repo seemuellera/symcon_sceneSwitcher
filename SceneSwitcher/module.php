@@ -46,6 +46,7 @@ class SceneSwitcher extends IPSModule {
 		// Timer
 		$this->RegisterTimer("RefreshInformation", 0 , 'SCENESWITCH_RefreshInformation($_IPS[\'TARGET\']);');
 		$this->RegisterTimer("NextScene", 0 , 'SCENESWITCH_NextScene($_IPS[\'TARGET\']);');
+		$this->RegisterTimer("NextTransitionStep", 0 , 'SCENESWITCH_NextTransitionStep($_IPS[\'TARGET\']);');
     }
 
 	public function Destroy() {
@@ -132,6 +133,7 @@ class SceneSwitcher extends IPSModule {
 		$form['actions'][] = Array(	"type" => "Button", "label" => "Turn Off", "onClick" => 'SCENESWITCH_TurnOff($id);');
 		$form['actions'][] = Array(	"type" => "Button", "label" => "Turn On", "onClick" => 'SCENESWITCH_TurnOn($id);');
 		$form['actions'][] = Array(	"type" => "Button", "label" => "Next Scene", "onClick" => 'SCENESWITCH_NextScene($id);');
+		$form['actions'][] = Array(	"type" => "Button", "label" => "Next Transition Step", "onClick" => 'SCENESWITCH_NextTransitionStep($id);');
 
 		// Return the completed form
 		return json_encode($form);
@@ -153,9 +155,6 @@ class SceneSwitcher extends IPSModule {
 	public function RefreshInformation() {
 
 		$this->LogMessage("Refresh in Progress", "DEBUG");
-		
-		$this->CalculateTransition();
-		$this->RenderTransitionToHtml();
 	}
 
 	public function RequestAction($Ident, $Value) {
@@ -214,10 +213,20 @@ class SceneSwitcher extends IPSModule {
 			return;
 		}
 		
+		$scene = $this->GetScene($sceneNumber);
+		
+		if (! $scene) {
+			
+				$this->LogMessage("Unable to retrieve scene definition", "ERROR");
+				return;
+		}
+		
+		SetValue($this->GetIDForIdent("SceneNumber"), $scene['Number']);
+		SetValue($this->GetIDForIdent("SceneName"), $scene['Name']);
+		
 		// This is a fresh turn on 
 		if (GetValue($this->GetIDForIdent("SceneNumber")) == 0) {
 		
-			$scene = $this->GetScene($sceneNumber);
 			$this->SetTargetDevice($scene);
 			
 			SetValue($this->GetIDForIdent("Transition"), "");
@@ -237,13 +246,75 @@ class SceneSwitcher extends IPSModule {
 			
 			return;
 		}
+		else {
+			
+			$this->CalculateTransition();
+			$this->RenderTransitionToHtml();
+			
+			SetValue($this->GetIDForIdent("TransitionStatus"), true);
+			SetValue($this->GetIDForIdent("TransitionStepNumber", 1);
+			
+			$currentStep = $this->GetTransitionStep(1);
+			$this->SetTargetDevice($currentStep);
+			
+			$newInterval = $this->ReadPropertyInteger("TransitionStepInterval") * 1000;
+			$this->SetTimerInterval("NextTransitionStep", $newInterval);
+		}
+	}
+	
+	public function NextTransitionStep() {
+		
+		if (! GetValue($this->GetIDForIdent("TransitionStatus")) ) {
+			
+			$this->LogMessage("Cannot proceed to next transition step as no transition is in progress","DEBUG");
+			return false;
+		}
+		
+		$currentTransitionStepNumber = GetValue($this->GetIDForIdent("TransitionStepNumber"));
+		
+		$nextTransitionStepNumber = $currentTransitionStepNumber + 1;
+		
+		// Abort if out of bounds
+		if ($nextTransitionStepNumber > $this->GetNumberOfTransitions() ) {
+			
+			$this->LogMessage("Cannot proceed transition as the current step is out of bounds. deactivating transitions","DEBUG");
+			
+			SetValue($this->GetIDForIdent("TransitionStatus"), false);
+			SetValue($this->GetIDForIdent("TransitionStepNumber", 0);
+			SetValue($this->GetIDForIdent("Transition"), "");
+			SetValue($this->GetIDForIdent("TransitionJSON"), "");
+			
+			$this->SetTimerInterval("NextTransitionStep", 0);
+			
+			return;
+		}
+		
+		$transition = $this->GetTransitionStep($nextTransitionStepNumber);
+		if (! $transition) {
+			
+			$this->LogMessage("Unable to get Transition information for step " . $nextTransitionStepNumber, "ERROR");
+			return;
+		}
+		
+		$this->SetTargetDevice($transition);
+		
+		// End if on last step
+		if ($nextTransitionStepNumber == $this->GetNumberOfTransitions) {
+			
+			SetValue($this->GetIDForIdent("TransitionStatus"), false);
+			SetValue($this->GetIDForIdent("TransitionStepNumber", 0);
+			SetValue($this->GetIDForIdent("Transition"), "");
+			SetValue($this->GetIDForIdent("TransitionJSON"), "");
+			
+			$this->SetTimerInterval("NextTransitionStep", 0);
+		}
+		else {
+			
+			SetValue($this->GetIDForIdent("TransitionStepNumber", $nextTransitionStepNumber);
+		}
 	}
 		
-		
 	protected function SetTargetDevice($scene) {
-		
-		SetValue($this->GetIDForIdent("SceneNumber"), $scene['Number']);
-		SetValue($this->GetIDForIdent("SceneName"), $scene['Name']);
 		
 		// We check first if the device needs to be turned off. If this is the case we execute this immediately, then stop
 		if (! $scene['Status']) {
@@ -314,6 +385,21 @@ class SceneSwitcher extends IPSModule {
 		else {
 			
 			return count($scenes);
+		}
+	}
+	
+	public function GetNumberOfTransitions() {
+		
+		$transitionJson = GetValue($this->GetIDForIdent("TransitionJSON"));
+		$transition = json_decode($transitionJson, true);
+		
+		if (! is_array($transition)) {
+			
+			return 0;
+		}
+		else {
+			
+			return count($transition);
 		}
 	}
 	
@@ -424,6 +510,44 @@ class SceneSwitcher extends IPSModule {
 		);
 		
 		return $currentScene;
+	}
+	
+	protected function GetTransitionStep($stepNumber) {
+		
+		$transitionJson = GetValue($this->GetIDForIdent("TransitionJSON");
+		$transition = json_decode($transitionJson, true);
+		
+		if (! is_array($transition)) {
+			
+			$this->LogMessage("No Transitions are defined. Unable to Get Transition Details","ERROR");
+			return;
+		}
+		
+		if (count($transition) == 0) {
+			
+			$this->LogMessage("No Transitions are defined. Unable to Get Transition Details","ERROR");
+			return;
+		}
+		
+		if ($stepNumber <= 0) {
+			
+			$this->LogMessage("Step number must be positive. You specified " . $stepNumber,"ERROR");
+			return;
+		}
+		
+		if ($stepNumber > count($transition) ) {
+			
+			$this->LogMessage("Step number refers to a Transition step that does not exist. You specified " . $stepNumber . " but there are only " . count($transition) . " steps defined","ERROR");
+			return;
+		}
+		
+		$currentStep = Array(
+			"Status" => $transition[$stepNumber]['Status'],
+			"Intensity" => $transition[$stepNumber]['Intensity'],
+			"Color" => $transition[$stepNumber]['Color']
+		);
+		
+		return $currentStep;
 	}
 	
 	protected function CalculateTransition() {
