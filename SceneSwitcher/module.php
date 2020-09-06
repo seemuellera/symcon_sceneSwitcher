@@ -471,7 +471,7 @@ class SceneSwitcher extends IPSModule {
 							'<th>Step</th>' .
 							'<th>Status</th>'  .
 							'<th>Intensity</th>' .
-							'<th>Color</th>'
+							'<th>Color</th>' .
 						'</thead>';
 						
 		$htmlText .= '<tbody>';
@@ -498,7 +498,7 @@ class SceneSwitcher extends IPSModule {
 								$transition[$i]['Intensity'] .
 							'</td>' .
 							'<td bgcolor="#' . $colorHex . '">' .
-								$transition[$i]['Color']
+								$transition[$i]['Color'] .
 							'</td>' .
 						'</tr>';
 		}
@@ -507,6 +507,6 @@ class SceneSwitcher extends IPSModule {
 		
 		SetValue($this->GetIDForIdent("Transition"), $htmlText);
 		
-		return $htmlText;
+		return $transition;
 	}
 }
