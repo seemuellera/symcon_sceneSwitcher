@@ -153,6 +153,9 @@ class SceneSwitcher extends IPSModule {
 	public function RefreshInformation() {
 
 		$this->LogMessage("Refresh in Progress", "DEBUG");
+		
+		$this->CalculateTransition();
+		$this->RenderTransitionToHtml();
 	}
 
 	public function RequestAction($Ident, $Value) {
@@ -314,35 +317,10 @@ class SceneSwitcher extends IPSModule {
 			
 			return false;
 		}
-		
-		$scenesJson = $this->ReadPropertyString("Scenes");
-		$scenes = json_decode($scenesJson);
-		
-		if (! is_array($scenes)) {
 			
-			$this->LogMessage("No Scenes are defined. Unable to Get Scene Details","ERROR");
-			return;
-		}
-		
-		if (count($scenes) == 0) {
-			
-			$this->LogMessage("No Scenes are defined. Unable to Get Scene Details","ERROR");
-			return;
-		}
-		
 		$sceneNumber = GetValue($this->GetIDForIdent("SceneNumber"));
 		
-		$sceneIndex = $sceneNumber - 1;
-		
-		$currentScene = Array(
-			"Status" => $scenes[$sceneIndex]->Status,
-			"Intensity" => $scenes[$sceneIndex]->Intensity,
-			"Color" => $scenes[$sceneIndex]->Color,
-			"Name" => $scenes[$sceneIndex]->Name,
-			"Number" => $sceneNumber
-		);
-		
-		return $currentScene;
+		return $this->GetScene($sceneNumber);
 	}
 	
 	public function GetNextScene() {
@@ -351,9 +329,6 @@ class SceneSwitcher extends IPSModule {
 			
 			return false;
 		}
-		
-		$currentSceneNumber = GetValue($this->GetIDForIdent("SceneNumber"));
-		$sceneNumber = $currentSceneNumber + 1;
 		
 		if ($sceneNumber > $this->GetNumberOfScenes() ) {
 			
@@ -367,6 +342,11 @@ class SceneSwitcher extends IPSModule {
 			}
 		}
 		
+		return $this->GetScene($sceneNumber);
+	}
+	
+	protected function GetScene($sceneNumer) {
+		
 		$scenesJson = $this->ReadPropertyString("Scenes");
 		$scenes = json_decode($scenesJson);
 		
@@ -382,7 +362,19 @@ class SceneSwitcher extends IPSModule {
 			return;
 		}
 		
-		$sceneIndex  = $sceneNumber - 	1;
+		if ($sceneNumber <= 0) {
+			
+			$this->LogMessage("Scene number must be positive. You specified " . $sceneNumber,"ERROR");
+			return;
+		}
+		
+		if ($sceneNumber > $this->GetNumberOfScenes() ) {
+			
+			$this->LogMessage("Scene number refers to a scene that does not exist. You specified " . $sceneNumber . " but there are only " . $this->GetNumberOfScenes() . " scenes defined","ERROR");
+			return;
+		}
+		
+		$sceneIndex  = $sceneNumber - 1;
 		
 		$currentScene = Array(
 			"Status" => $scenes[$sceneIndex]->Status,
@@ -395,7 +387,7 @@ class SceneSwitcher extends IPSModule {
 		return $currentScene;
 	}
 	
-	public function calculateTransition() {
+	protected function CalculateTransition() {
 		
 		$currentScene = $this->GetCurrentScene();
 		$nextScene = $this->GetNextScene();
@@ -467,6 +459,12 @@ class SceneSwitcher extends IPSModule {
 		$transition[$transitionSteps]['Color'] = $nextScene['Color'];	
 		
 		SetValue($this->GetIDForIdent("TransitionJSON"), json_encode($transition));
+		
+	}
+	
+	protected function RenderTransitionToHtml() {
+		
+		$transition = json_decode(ReadValue($this->GetIDForIdent("TransitionJSON")));
 		
 		$htmlText = '<table border="1px">' .
 						'<thead>' .
