@@ -29,16 +29,16 @@ class SceneSwitcher extends IPSModule {
 		$this->RegisterPropertyBoolean("RepeatOnLastScene",false);
 		$this->RegisterPropertyInteger("TransitionStepInterval",0);
 		$this->RegisterPropertyInteger("TransitionSteps",0);
-		$this->RegisterPropertyInteger("CurrentTransitionStep",0);
-		$this->RegisterPropertyString("Transition","");
 		$this->RegisterPropertyString("Scenes","");
 		
 		// Variables
 		$this->RegisterVariableBoolean("Status","Status","~Switch");
 		$this->RegisterVariableBoolean("TransitionStatus","Transition in progress","~Switch");
 		$this->RegisterVariableInteger("SceneNumber","Active Scene Number");
+		$this->RegisterVariableInteger("TransitonStepNumber","Transition Step Number");
 		$this->RegisterVariableString("SceneName","Active Scene Name");
 		$this->RegisterVariableString("Transition","Scene Transition","~HTMLBox");
+		$this->RegisterVariableString("TransitionJSON","Scene Transition JSON");
 		
 		// Default Actions
 		$this->EnableAction("Status");
@@ -466,6 +466,8 @@ class SceneSwitcher extends IPSModule {
 		$transition[$transitionSteps]['Intensity'] = $nextScene['Intensity'];
 		$transition[$transitionSteps]['Color'] = $nextScene['Color'];	
 		
+		SetValue($this->GetIDForIdent("TransitionJSON"), json_encode($transition));
+		
 		$htmlText = '<table border="1px">' .
 						'<thead>' .
 							'<th>Step</th>' .
@@ -506,7 +508,5 @@ class SceneSwitcher extends IPSModule {
 		$htmlText .= '</tbody></table>';
 		
 		SetValue($this->GetIDForIdent("Transition"), $htmlText);
-		
-		return $transition;
 	}
 }
