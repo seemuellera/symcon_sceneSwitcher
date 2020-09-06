@@ -402,40 +402,40 @@ class SceneSwitcher extends IPSModule {
 		
 		$transitionSteps = $this->ReadPropertyInteger("TransitionSteps");
 		
-		$deltaIntensity = $nextScene->Intensity - $currentScene->Intensity;
+		$deltaIntensity = $nextScene['Intensity'] - $currentScene['Intensity'];
 		$stepsizeIntensity = round($deltaIntensity / $transitionSteps);
 		
-		$transition[0]->Status = $currentScene->Status;
-		$transition[0]->Intensity = $currentScene->Intentity;
-		$transition[0]->Color = $currentScene->Color;
+		$transition[0]['Status'] = $currentScene['Status'];
+		$transition[0]['Intensity'] = $currentScene['Intentity'];
+		$transition[0]['Color'] = $currentScene['Color'];
 		
-		$transition[$transitionSteps + 1]->Status = $currentScene->Status;
-		$transition[$transitionSteps + 1]->Intensity = $currentScene->Intentity;
-		$transition[$transitionSteps + 1]->Color = $currentScene->Color;
+		$transition[$transitionSteps + 1]['Status'] = $currentScene['Status'];
+		$transition[$transitionSteps + 1]['Intensity'] = $currentScene['Intentity'];
+		$transition[$transitionSteps + 1]['Color'] = $currentScene['Color'];
 		
 		for ($i=1; $i <= $transitionSteps; $i++) {
 			
-			if ($currentScene->Status && $nextScene->Status) {
+			if ($currentScene['Status'] && $nextScene['Status']) {
 				
-				$transition[$i]->Status = true;
+				$transition[$i]['Status'] = true;
 			}
 			
-			if ( (! $currentScene->Status) && (! $nextScene->Status) ) {
+			if ( (! $currentScene['Status']) && (! $nextScene['Status']) ) {
 				
-				$transition[$i]->Status = false;
+				$transition[$i]['Status'] = false;
 			}
 			
-			if ( (! $currentScene->Status) && $nextScene->Status) {
+			if ( (! $currentScene['Status']) && $nextScene['Status']) {
 				
-				$transition[$i]->Status = false;
+				$transition[$i]['Status'] = false;
 			}
 			
-			if ($currentScene->Status && (! $nextScene->Status) ) {
+			if ($currentScene['Status'] && (! $nextScene['Status']) ) {
 				
-				$transition[$i]->Status = true;
+				$transition[$i]['Status'] = true;
 			}
 			
-			$transition[$i]->Intensity = $currentScene->Intensity + ($stepsizeIntensity * $i);
+			$transition[$i]['Intensity'] = $currentScene['Intensity'] + ($stepsizeIntensity * $i);
 		}
 		
 		return $transition;
