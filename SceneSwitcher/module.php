@@ -406,11 +406,11 @@ class SceneSwitcher extends IPSModule {
 		$stepsizeIntensity = round($deltaIntensity / $transitionSteps);
 		
 		$transition[0]['Status'] = $currentScene['Status'];
-		$transition[0]['Intensity'] = $currentScene['Intentity'];
+		$transition[0]['Intensity'] = $currentScene['Intensity'];
 		$transition[0]['Color'] = $currentScene['Color'];
 		
 		$transition[$transitionSteps + 1]['Status'] = $currentScene['Status'];
-		$transition[$transitionSteps + 1]['Intensity'] = $currentScene['Intentity'];
+		$transition[$transitionSteps + 1]['Intensity'] = $currentScene['Intensity'];
 		$transition[$transitionSteps + 1]['Color'] = $currentScene['Color'];
 		
 		for ($i=1; $i <= $transitionSteps; $i++) {
