@@ -507,6 +507,6 @@ class SceneSwitcher extends IPSModule {
 		
 		SetValue($this->GetIDForIdent("Transition"), $htmlText);
 		
-		return $transition;
+		return $htmlText;
 	}
 }
