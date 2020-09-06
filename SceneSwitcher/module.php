@@ -345,7 +345,7 @@ class SceneSwitcher extends IPSModule {
 		return $this->GetScene($sceneNumber);
 	}
 	
-	protected function GetScene($sceneNumer) {
+	protected function GetScene($sceneNumber) {
 		
 		$scenesJson = $this->ReadPropertyString("Scenes");
 		$scenes = json_decode($scenesJson);
