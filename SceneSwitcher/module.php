@@ -411,6 +411,18 @@ class SceneSwitcher extends IPSModule {
 		$deltaIntensity = $nextScene['Intensity'] - $currentScene['Intensity'];
 		$stepsizeIntensity = $deltaIntensity / $transitionSteps;
 		
+		$currentSceneColorRed = hexdec(substr($currentScene['Color'],1,2)); 
+		$currentSceneColorGreen=hexdec(substr($currentScene['Color'],3,2)); 
+		$currentSceneColorBlue=hexdec(substr($currentScene['Color'],5,2)); 
+
+		$nextSceneColorRed = hexdec(substr($nextScene['Color'],1,2)); 
+		$nextSceneColorGreen=hexdec(substr($nextScene['Color'],3,2)); 
+		$nextSceneColorBlue=hexdec(substr($nextScene['Color'],5,2)); 
+		
+		$deltaColorRed = $nextSceneColorRed - $currentSceneColorRed;
+		$deltaColorGreen = $nextSceneColorGreen - $currentSceneColorGreen;
+		$deltaColorBlue = $nextSceneColorBlue - $currentSceneColorBlue;
+		
 		$transition[0]['Status'] = $currentScene['Status'];
 		$transition[0]['Intensity'] = $currentScene['Intensity'];
 		$transition[0]['Color'] = $currentScene['Color'];
@@ -438,6 +450,16 @@ class SceneSwitcher extends IPSModule {
 			}
 			
 			$transition[$i]['Intensity'] = round($currentScene['Intensity'] + ($stepsizeIntensity * $i) );
+			
+			$factor = $i / $transitionSteps;
+			
+			$transitionColorRed = round($currentSceneColorRed + $deltaColorRed * $factor);
+			$transitionColorGreen = round($currentSceneColorGreen + $deltaColorGreen * $factor);
+			$transitionColorBlue = round($currentSceneColorBlue + $deltaColorBlue * $factor);
+			
+			$transitionColorHex = sprintf("%02X",$transitionColorRed) . sprintf("%02X",$transitionColorGreen) . sprintf("%02X",$transitionColorBlue);
+			
+			$transition[$i]['Color'] = hexdec($transitionColorHex);
 		}
 
 		$transition[$transitionSteps]['Status'] = $nextScene['Status'];
