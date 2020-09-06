@@ -411,13 +411,13 @@ class SceneSwitcher extends IPSModule {
 		$deltaIntensity = $nextScene['Intensity'] - $currentScene['Intensity'];
 		$stepsizeIntensity = $deltaIntensity / $transitionSteps;
 		
-		$currentSceneColorRed = hexdec(substr($currentScene['Color'],1,2)); 
-		$currentSceneColorGreen=hexdec(substr($currentScene['Color'],3,2)); 
-		$currentSceneColorBlue=hexdec(substr($currentScene['Color'],5,2)); 
+		$currentSceneColorRed = hexdec(substr($currentScene['Color'],0,2)); 
+		$currentSceneColorGreen=hexdec(substr($currentScene['Color'],2,2)); 
+		$currentSceneColorBlue=hexdec(substr($currentScene['Color'],4,2)); 
 
-		$nextSceneColorRed = hexdec(substr($nextScene['Color'],1,2)); 
-		$nextSceneColorGreen=hexdec(substr($nextScene['Color'],3,2)); 
-		$nextSceneColorBlue=hexdec(substr($nextScene['Color'],5,2)); 
+		$nextSceneColorRed = hexdec(substr($nextScene['Color'],0,2)); 
+		$nextSceneColorGreen=hexdec(substr($nextScene['Color'],2,2)); 
+		$nextSceneColorBlue=hexdec(substr($nextScene['Color'],4,2)); 
 		
 		$deltaColorRed = $nextSceneColorRed - $currentSceneColorRed;
 		$deltaColorGreen = $nextSceneColorGreen - $currentSceneColorGreen;
