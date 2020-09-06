@@ -332,6 +332,49 @@ class SceneSwitcher extends IPSModule {
 		return $currentScene;
 	}
 	
+	public function GetNextScene() {
+		
+		$currentSceneIndex = GetValue($this->GetIDForIdent("SceneNumber"));
+		$sceneIndex = $currentSceneIndex + 1;
+		
+		if ($sceneIndex > $this->GetNumberOfScenes() ) {
+			
+			if ($this->ReadPropertyBoolean("RepeatOnLastScene")) {
+				
+				$sceneIndex = 1;
+			}
+			else {
+				
+				return false;
+			}
+		}
+		
+		$scenesJson = $this->ReadPropertyString("Scenes");
+		$scenes = json_decode($scenesJson);
+		
+		if (! is_array($scenes)) {
+			
+			$this->LogMessage("No Scenes are defined. Unable to Get Scene Details","ERROR");
+			return;
+		}
+		
+		if (count($scenes) == 0) {
+			
+			$this->LogMessage("No Scenes are defined. Unable to Get Scene Details","ERROR");
+			return;
+		}
+		
+		$currentScene = Array(
+			"Status" => $scenes[$sceneIndex]->Status,
+			"Intensity" => $scenes[$sceneIndex]->Intensity,
+			"Color" => $scenes[$sceneIndex]->Color,
+			"Name" => $scenes[$sceneIndex]->Name,
+			"Number" => $sceneIndex
+		);
+		
+		return $currentScene;
+	}
+	
 	protected function calculateTransition() {
 		
 		
