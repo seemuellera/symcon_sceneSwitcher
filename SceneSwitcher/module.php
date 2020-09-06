@@ -376,7 +376,7 @@ class SceneSwitcher extends IPSModule {
 			return;
 		}
 		
-		$sceneIndex  = $sceneNumber - 1;
+		$sceneIndex  = $sceneNumber - 	1;
 		
 		$currentScene = Array(
 			"Status" => $scenes[$sceneIndex]->Status,
@@ -389,8 +389,55 @@ class SceneSwitcher extends IPSModule {
 		return $currentScene;
 	}
 	
-	protected function calculateTransition() {
+	public function calculateTransition() {
 		
+		$currentScene = $this->GetCurrentScene();
+		$nextScene = $this->GetNextScene();
 		
+		if (! $nextScene) {
+			
+			SetValue($this->GetIDForIdent("Transition"), "This is the last scene. No transition is needed.");
+			return;
+		}
+		
+		$transitionSteps = $this->ReadPropertyInteger("TransitionSteps");
+		
+		$deltaIntensity = $nextScene->Intensity - $currentScene->Intensity;
+		$stepsizeIntensity = round($deltaIntensity / $transitionSteps);
+		
+		$transition[0]->Status = $currentScene->Status;
+		$transition[0]->Intensity = $currentScene->Intentity;
+		$transition[0]->Color = $currentScene->Color;
+		
+		$transition[$transitionSteps + 1]->Status = $currentScene->Status;
+		$transition[$transitionSteps + 1]->Intensity = $currentScene->Intentity;
+		$transition[$transitionSteps + 1]->Color = $currentScene->Color;
+		
+		for ($i=1; $i <= $transitionSteps; $i++) {
+			
+			if ($currentScene->Status && $nextScene->Status) {
+				
+				$transition[$i]->Status = true;
+			}
+			
+			if ( (! $currentScene->Status) && (! $nextScene->Status) ) {
+				
+				$transition[$i]->Status = false;
+			}
+			
+			if ( (! $currentScene->Status) && $nextScene->Status) {
+				
+				$transition[$i]->Status = false;
+			}
+			
+			if ($currentScene->Status && (! $nextScene->Status) ) {
+				
+				$transition[$i]->Status = true;
+			}
+			
+			$transition[$i]->Intensity = $currentScene->Intensity + ($stepsizeIntensity * $i);
+		}
+		
+		return $transition;
 	}
 }
