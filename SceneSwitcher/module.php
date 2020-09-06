@@ -241,16 +241,22 @@ class SceneSwitcher extends IPSModule {
 			return;
 		}
 		
-		if ($scenes[$sceneIndex]->Intensity != GetValue($this->ReadPropertyInteger("TargetIntensityVariableId")) ) {
+		if ($scenes[$sceneIndex]->Intensity) {
 			
-			$this->LogMessage("Adjusting Intensity to level " . $scenes[$sceneIndex]->Intensity, "DEBUG");
-			RequestAction($this->ReadPropertyInteger("TargetIntensityVariableId"), $scenes[$sceneIndex]->Intensity);
+			if ($scenes[$sceneIndex]->Intensity != GetValue($this->ReadPropertyInteger("TargetIntensityVariableId")) ) {
+				
+				$this->LogMessage("Adjusting Intensity to level " . $scenes[$sceneIndex]->Intensity, "DEBUG");
+				RequestAction($this->ReadPropertyInteger("TargetIntensityVariableId"), $scenes[$sceneIndex]->Intensity);
+			}
 		}
 		
-		if ($scenes[$sceneIndex]->Color != GetValue($this->ReadPropertyInteger("TargetColorVariableId")) ) {
+		if ($scenes[$sceneIndex]->Color) {
 			
-			$this->LogMessage("Adjusting Color to value " . $scenes[$sceneIndex]->Color, "DEBUG");
-			RequestAction($this->ReadPropertyInteger("TargetColorVariableId"), $scenes[$sceneIndex]->Color);
+			if ($scenes[$sceneIndex]->Color != GetValue($this->ReadPropertyInteger("TargetColorVariableId")) ) {
+				
+				$this->LogMessage("Adjusting Color to value " . $scenes[$sceneIndex]->Color, "DEBUG");
+				RequestAction($this->ReadPropertyInteger("TargetColorVariableId"), $scenes[$sceneIndex]->Color);
+			}
 		}
 		
 		SetValue($this->GetIDForIdent("SceneNumber"), $sceneNumber);
