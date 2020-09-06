@@ -330,6 +330,9 @@ class SceneSwitcher extends IPSModule {
 			return false;
 		}
 		
+		$currentSceneNumber = GetValue($this->GetIDForIdent("SceneNumber"));
+		$sceneNumber = $currentSceneNumber + 1;
+		
 		if ($sceneNumber > $this->GetNumberOfScenes() ) {
 			
 			if ($this->ReadPropertyBoolean("RepeatOnLastScene")) {
