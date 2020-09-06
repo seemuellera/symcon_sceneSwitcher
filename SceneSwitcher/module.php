@@ -38,6 +38,7 @@ class SceneSwitcher extends IPSModule {
 		$this->RegisterVariableBoolean("TransitionStatus","Transition in progress","~Switch");
 		$this->RegisterVariableInteger("SceneNumber","Active Scene Number");
 		$this->RegisterVariableString("SceneName","Active Scene Name");
+		$this->ReadPropertyString("Transition","Scene Transition","~HTMLBox");
 		
 		// Default Actions
 		$this->EnableAction("Status");
@@ -299,5 +300,40 @@ class SceneSwitcher extends IPSModule {
 			$this->LogMessage("Switching to next Scene $nextScene", "DEBUG");
 			$this->ActivateSceneNumber($nextScene);
 		}
+	}
+	
+	public function GetCurrentScene() {
+		
+		$scenesJson = $this->ReadPropertyString("Scenes");
+		$scenes = json_decode($scenesJson);
+		
+		if (! is_array($scenes)) {
+			
+			$this->LogMessage("No Scenes are defined. Unable to Get Scene Details","ERROR");
+			return;
+		}
+		
+		if (count($scenes) == 0) {
+			
+			$this->LogMessage("No Scenes are defined. Unable to Get Scene Details","ERROR");
+			return;
+		}
+		
+		$sceneIndex = GetValue($this->GetIDForIdent("SceneNumber"));
+		
+		$currentScene = Array(
+			"Status" => $scenes[$sceneIndex]->Status,
+			"Intensity" => $scenes[$sceneIndex]->Intensity,
+			"Color" => $scenes[$sceneIndex]->Color,
+			"Name" => $scenes[$sceneIndex]->Name,
+			"Number" => $sceneIndex
+		);
+		
+		return $currentScene;
+	}
+	
+	protected function calculateTransition() {
+		
+		
 	}
 }
