@@ -326,7 +326,7 @@ class SceneSwitcher extends IPSModule {
 		
 		$sceneIndex = GetValue($this->GetIDForIdent("SceneNumber"));
 		
-		$sceneNumbbbbbbbber = $sceneIndex + 1
+		$sceneNumber = $sceneIndex + 1
 		
 		$currentScene = Array(
 			"Status" => $scenes[$sceneIndex]->Status,
