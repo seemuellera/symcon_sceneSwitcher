@@ -423,6 +423,21 @@ class SceneSwitcher extends IPSModule {
 		$deltaColorGreen = $nextSceneColorGreen - $currentSceneColorGreen;
 		$deltaColorBlue = $nextSceneColorBlue - $currentSceneColorBlue;
 		
+		$transition[100]['c1r'] = currentSceneColorRed;
+		$transition[100]['c1g'] = currentSceneColorGreen;
+		$transition[100]['c1b'] = currentSceneColorBlue;
+		$transition[100]['c2r'] = nextSceneColorRed;
+		$transition[100]['c2g'] = nextSceneColorGreen;
+		$transition[100]['c2b'] = nextSceneColorBlue;
+		$transition[100]['dr'] = currentSceneColorRed;
+		$transition[100]['dg'] = currentSceneColorGreen;
+		$transition[100]['db'] = currentSceneColorBlue;
+		$transition[100]['c1h'] = hexdec($currentScene['Color']);
+		$transition[100]['c2h'] = hexdec($nextScene['Color']);
+		
+		
+		
+		
 		$transition[0]['Status'] = $currentScene['Status'];
 		$transition[0]['Intensity'] = $currentScene['Intensity'];
 		$transition[0]['Color'] = $currentScene['Color'];
