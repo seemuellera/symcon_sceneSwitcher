@@ -490,8 +490,17 @@ class SceneSwitcher extends IPSModule {
 			
 			$colorHex = dechex($transition[$i]['Color']);
 			
+			if (GetValue($this->GetIDForIdent("TransitionStepNumber")) == $i) {
+				
+				bgcolor_step = "red";
+			}
+			else {
+				
+				bgcolor_step = "transparent";
+			}
+			
 			$htmlText .= '<tr>' .
-							'<td>' .
+							'<td bgcolor="' . $bgcolor_step . '">' .
 								$i .
 							'</td>' .
 							'<td>' .
