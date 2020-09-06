@@ -38,7 +38,7 @@ class SceneSwitcher extends IPSModule {
 		$this->RegisterVariableBoolean("TransitionStatus","Transition in progress","~Switch");
 		$this->RegisterVariableInteger("SceneNumber","Active Scene Number");
 		$this->RegisterVariableString("SceneName","Active Scene Name");
-		$this->ReadPropertyString("Transition","Scene Transition","~HTMLBox");
+		$this->RegisterVariableString("Transition","Scene Transition","~HTMLBox");
 		
 		// Default Actions
 		$this->EnableAction("Status");
