@@ -498,7 +498,7 @@ class SceneSwitcher extends IPSModule {
 								$transition[$i]['Intensity'] .
 							'</td>' .
 							'<td bgcolor="#' . $colorHex . '">' .
-								$transition[$i]['Color'] .
+								$transition[$i]['Color'] . ' / ' . $colorHex .
 							'</td>' .
 						'</tr>';
 		}
