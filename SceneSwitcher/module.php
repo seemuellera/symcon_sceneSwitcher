@@ -234,11 +234,7 @@ class SceneSwitcher extends IPSModule {
 			
 			return;
 		}
-
 		
-		SetValue($this->GetIDForIdent("SceneNumber"), $scene['Number']);
-		SetValue($this->GetIDForIdent("SceneName"), $scene['Name']);
-				
 		// No Transition Steps are needed in this case
 		if ($this->ReadPropertyInteger("TransitionSteps") <= 1) {
 			
@@ -247,6 +243,9 @@ class SceneSwitcher extends IPSModule {
 			
 			SetValue($this->GetIDForIdent("Transition"), "");
 			SetValue($this->GetIDForIdent("TransitionJSON"), "");
+			
+			SetValue($this->GetIDForIdent("SceneNumber"), $scene['Number']);
+			SetValue($this->GetIDForIdent("SceneName"), $scene['Name']);
 			
 			return;
 		}
@@ -263,6 +262,9 @@ class SceneSwitcher extends IPSModule {
 			
 			$newInterval = $this->ReadPropertyInteger("TransitionStepInterval") * 1000;
 			$this->SetTimerInterval("NextTransitionStep", $newInterval);
+			
+			SetValue($this->GetIDForIdent("SceneNumber"), $scene['Number']);
+			SetValue($this->GetIDForIdent("SceneName"), $scene['Name']);
 		}
 	}
 	
