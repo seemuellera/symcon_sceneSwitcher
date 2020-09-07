@@ -252,10 +252,11 @@ class SceneSwitcher extends IPSModule {
 		else {
 			
 			$this->CalculateTransition();
-			$this->RenderTransitionToHtml();
 			
 			SetValue($this->GetIDForIdent("TransitionStatus"), true);
 			SetValue($this->GetIDForIdent("TransitionStepNumber"), 1);
+			
+			$this->RenderTransitionToHtml();
 			
 			$currentStep = $this->GetTransitionStep(1);
 			$this->SetTargetDevice($currentStep);
