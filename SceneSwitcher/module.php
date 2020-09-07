@@ -31,12 +31,23 @@ class SceneSwitcher extends IPSModule {
 		$this->RegisterPropertyInteger("TransitionSteps",0);
 		$this->RegisterPropertyString("Scenes","");
 		
+		// Variable profiles
+		$variableProfileSceneControl = "SCENESWITCH.SceneControl";
+		if (IPS_VariableProfileExists($variableProfileSceneControl) ) {
+		
+			IPS_DeleteVariableProfile($variableProfileSceneControl);
+		}			
+		IPS_CreateVariableProfile($variableProfileSceneControl, 1);
+		IPS_SetVariableProfileIcon($variableProfileSceneControl, "Remote");
+		IPS_SetVariableProfileAssociation($variableProfileSceneControl, 1, "Next Scene", "HollowDoubleArrowRight", -1);
+		
 		// Variables
 		$this->RegisterVariableBoolean("Status","Status","~Switch");
 		$this->RegisterVariableBoolean("TransitionStatus","Transition in progress","~Switch");
 		$this->RegisterVariableInteger("SceneNumber","Active Scene Number");
 		$this->RegisterVariableInteger("TransitionStepNumber","Transition Step Number");
 		IPS_SetHidden($this->GetIDForIdent("TransitionStepNumber"), true);
+		$this->RegisterVariableInteger("SceneControl","Scene Control",$variableProfileSceneControl);
 		$this->RegisterVariableString("SceneName","Active Scene Name");
 		$this->RegisterVariableString("Transition","Scene Transition","~HTMLBox");
 		$this->RegisterVariableString("TransitionJSON","Scene Transition JSON");
@@ -44,6 +55,7 @@ class SceneSwitcher extends IPSModule {
 		
 		// Default Actions
 		$this->EnableAction("Status");
+		$this->EnableAction("SceneControl");
 		
 		// Timer
 		$this->RegisterTimer("RefreshInformation", 0 , 'SCENESWITCH_RefreshInformation($_IPS[\'TARGET\']);');
@@ -172,6 +184,11 @@ class SceneSwitcher extends IPSModule {
 				else {
 					
 					$this->TurnOff();
+				}
+				break;
+			case "SceneControl":
+				if ($Value == 1) {
+					$this->NextScene();
 				}
 				break;
 			default:
