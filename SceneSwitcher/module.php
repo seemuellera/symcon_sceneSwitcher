@@ -317,6 +317,7 @@ class SceneSwitcher extends IPSModule {
 		else {
 			
 			SetValue($this->GetIDForIdent("TransitionStepNumber"), $nextTransitionStepNumber);
+			$this->RenderTransitionToHtml();
 		}
 	}
 		
@@ -405,7 +406,7 @@ class SceneSwitcher extends IPSModule {
 		}
 		else {
 			
-			return count($transition);
+			return count($transition) - 1;
 		}
 	}
 	
