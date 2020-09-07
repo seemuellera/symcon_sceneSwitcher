@@ -186,7 +186,13 @@ class SceneSwitcher extends IPSModule {
 		SetValue($this->GetIDForIdent("SceneNumber"), 0);
 		SetValue($this->GetIDForIdent("SceneName"), "");
 		
+		SetValue($this->GetIDForIdent("TransitionStatus"), false);
+		SetValue($this->GetIDForIdent("TransitionStepNumber"), 0);
+		SetValue($this->GetIDForIdent("Transition"), "");
+		SetValue($this->GetIDForIdent("TransitionJSON"), "");
+		
 		$this->SetTimerInterval("NextScene", 0);
+		$this->SetTimerInterval("NextTransitionStep", 0);
 	}
 	
 	public function TurnOn() {
