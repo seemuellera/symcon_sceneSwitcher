@@ -614,6 +614,12 @@ class SceneSwitcher extends IPSModule {
 		$transition[0]['Status'] = $currentScene['Status'];
 		$transition[0]['Intensity'] = $currentScene['Intensity'];
 		$transition[0]['Color'] = $currentScene['Color'];
+		if ($this->ReadPropertyBoolean('DebugOutput')) {
+		
+			$transition[0]['Color_Red'] = $currentSceneColorRed;
+			$transition[0]['Color_Green'] = $currentSceneColorGreen;
+			$transition[0]['Color_Blue'] = $currentSceneColorBlue;
+		}
 			
 		for ($i=1; $i < $transitionSteps; $i++) {
 			
@@ -648,11 +654,23 @@ class SceneSwitcher extends IPSModule {
 			$transitionColorHex = sprintf("%02X",$transitionColorRed) . sprintf("%02X",$transitionColorGreen) . sprintf("%02X",$transitionColorBlue);
 			
 			$transition[$i]['Color'] = hexdec($transitionColorHex);
+			if ($this->ReadPropertyBoolean('DebugOutput')) {
+		
+				$transition[$i]['Color_Red'] = $transitionColorRed;
+				$transition[$i]['Color_Green'] = $transitionColorGreen;
+				$transition[$i]['Color_Blue'] = $transitionColorBlue;
+			}
 		}
 
 		$transition[$transitionSteps]['Status'] = $nextScene['Status'];
 		$transition[$transitionSteps]['Intensity'] = $nextScene['Intensity'];
 		$transition[$transitionSteps]['Color'] = $nextScene['Color'];	
+		if ($this->ReadPropertyBoolean('DebugOutput')) {
+		
+			$transition[$transitionSteps]['Color_Red'] = $nextSceneColorRed;
+			$transition[$transitionSteps]['Color_Green'] = $nextSceneColorGreen;
+			$transition[$transitionSteps]['Color_Blue'] = $nextSceneColorBlue;
+		}
 		
 		SetValue($this->GetIDForIdent("TransitionJSON"), json_encode($transition));
 		
