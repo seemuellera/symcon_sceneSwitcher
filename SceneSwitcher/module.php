@@ -331,7 +331,7 @@ class SceneSwitcher extends IPSModule {
 		$this->SetTargetDevice($transition);
 		
 		// End if on last step
-		if ($nextTransitionStepNumber == $this->GetNumberOfTransitions) {
+		if ($nextTransitionStepNumber == $this->GetNumberOfTransitions() ) {
 			
 			SetValue($this->GetIDForIdent("TransitionStatus"), false);
 			SetValue($this->GetIDForIdent("TransitionStepNumber"), 0);
