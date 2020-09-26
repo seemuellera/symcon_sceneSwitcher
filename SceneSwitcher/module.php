@@ -702,7 +702,15 @@ class SceneSwitcher extends IPSModule {
 				$transitionStatus = "Off";
 			}
 			
-			$colorHex = dechex($transition[$i]['Color']);
+			$colorDecRed = (($transition[$i]['Color'] >> 16) & 0xFF);
+			$colorDecGreen = (($transition[$i]['Color'] >> 8) & 0xFF);
+			$colorDecBlue = (($transition[$i]['Color']) & 0xFF);
+		
+			$colorHexRed = dechex($colorDecRed);
+			$colorHexGreen = dechex($colorDecGreen);
+			$colorHexBlue = dechex($colorDecBlue);
+			
+			$colorHex = strval($colorHexRed) + strval($colorHexGreen) + strval($colorHexBlue);
 			
 			if ( (GetValue($this->GetIDForIdent("TransitionStepNumber")) == $i) && GetValue($this->GetIDForIdent("TransitionStatus") ) ) {
 				
