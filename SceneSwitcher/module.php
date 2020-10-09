@@ -363,8 +363,6 @@ class SceneSwitcher extends IPSModule {
 			}
 		}
 		
-		print_r($scene);
-		
 		// Setting the color also sets the intensity and turns the device on is needed. So we do this next.
 		if ($scene['Color']) {
 			
@@ -380,6 +378,10 @@ class SceneSwitcher extends IPSModule {
 				
 				$this->LogMessage("Scene asks for a color to be set but no Color Variable was defined in the instance configuration","ERROR");
 			}
+		}
+		else {
+			
+			$this->LogMessage("This Scene has no target color defined", "DEBUG");
 		}
 		
 		// If no color was defined we proceed with intensity
@@ -398,7 +400,10 @@ class SceneSwitcher extends IPSModule {
 				$this->LogMessage("Scene asks for intensity to be set but no Intensity Variable was defined in the instance configuration","ERROR");
 			}
 		}
-		
+		else {
+			
+			$this->LogMessage("This Scene has no target intensity defined", "DEBUG");
+		}
 		
 		// Last option: Turn it on
 		if ($scene['Status']) {
@@ -408,6 +413,10 @@ class SceneSwitcher extends IPSModule {
 				$this->LogMessage("Scene requests device to be turned on but it is off. Turning it on","DEBUG");
 				RequestAction($this->ReadPropertyInteger("TargetStatusVariableId"), true);
 			}
+		}
+		else {
+			
+			$this->LogMessage("This Scene has no target state defined", "DEBUG");
 		}
 	}
 	
