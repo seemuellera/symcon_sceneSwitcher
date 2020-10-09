@@ -373,6 +373,10 @@ class SceneSwitcher extends IPSModule {
 					$this->LogMessage("Adjusting Color to value " . $scene['Color'], "DEBUG");
 					RequestAction($this->ReadPropertyInteger("TargetColorVariableId"), $scene['Color']);
 				}
+				else {
+					
+					$this->LogMessage("Color is already on the correct level","DEBUG");
+				}
 			}
 			else {
 				
@@ -394,6 +398,10 @@ class SceneSwitcher extends IPSModule {
 					$this->LogMessage("Adjusting Intensity to value " . $scene['Intensity'], "DEBUG");
 					RequestAction($this->ReadPropertyInteger("TargetIntensityVariableId"), $scene['Intensity']);
 				}
+				else {
+					
+					$this->LogMessage("Intensity is already on the correct level","DEBUG");
+				}
 			}
 			else {
 				
@@ -412,6 +420,10 @@ class SceneSwitcher extends IPSModule {
 				
 				$this->LogMessage("Scene requests device to be turned on but it is off. Turning it on","DEBUG");
 				RequestAction($this->ReadPropertyInteger("TargetStatusVariableId"), true);
+			}
+			else {
+					
+				$this->LogMessage("Status is already on the correct level","DEBUG");
 			}
 		}
 		else {
