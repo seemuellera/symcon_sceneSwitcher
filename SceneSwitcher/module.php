@@ -246,6 +246,8 @@ class SceneSwitcher extends IPSModule {
 				return;
 		}
 		
+		$this->LogMessage("Activating Scene number " . $scene['Number'] . " / " . $scene['Name'], "DEBUG");
+		
 		// This is a fresh turn on 
 		if (GetValue($this->GetIDForIdent("SceneNumber")) == 0) {
 		
