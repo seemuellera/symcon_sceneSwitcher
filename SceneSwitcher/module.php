@@ -251,6 +251,7 @@ class SceneSwitcher extends IPSModule {
 		// This is a fresh turn on 
 		if (GetValue($this->GetIDForIdent("SceneNumber")) == 0) {
 		
+			$this->LogMessage("This is a fresh turn on","DEBUG");
 			$this->SetTargetDevice($scene);
 			
 			SetValue($this->GetIDForIdent("Transition"), "");
@@ -361,6 +362,8 @@ class SceneSwitcher extends IPSModule {
 				return;
 			}
 		}
+		
+		print_r($scene);
 		
 		// Setting the color also sets the intensity and turns the device on is needed. So we do this next.
 		if ($scene['Color']) {
