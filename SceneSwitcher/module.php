@@ -416,7 +416,7 @@ class SceneSwitcher extends IPSModule {
 		// Last option: Turn it on
 		if ($scene['Status']) {
 			
-			if (GetValue($this->ReadPropertyInteger("TargetStatusVariableId"))) {
+			if (! GetValue($this->ReadPropertyInteger("TargetStatusVariableId"))) {
 				
 				$this->LogMessage("Scene requests device to be turned on but it is off. Turning it on","DEBUG");
 				RequestAction($this->ReadPropertyInteger("TargetStatusVariableId"), true);
