@@ -199,7 +199,7 @@ class SceneSwitcher extends IPSModule {
 	public function TurnOff() {
 		
 		$this->LogMessage("Turning device off","DEBUG");
-		RequestAction($this->ReadPropertyInteger("TargetStatusVariableId"), false);
+		$this->RequestActionWithBackOff($this->ReadPropertyInteger("TargetStatusVariableId"), false);
 		SetValue($this->GetIDForIdent("Status"), false);
 		
 		SetValue($this->GetIDForIdent("SceneNumber"), 0);
@@ -358,7 +358,7 @@ class SceneSwitcher extends IPSModule {
 			if (GetValue($this->ReadPropertyInteger("TargetStatusVariableId"))) {
 				
 				$this->LogMessage("Scene requests device to be turned off but it is on. Turning it off","DEBUG");
-				RequestAction($this->ReadPropertyInteger("TargetStatusVariableId"), false);
+				$this->RequestActionWithBackOff($this->ReadPropertyInteger("TargetStatusVariableId"), false);
 				return;
 			}
 		}
@@ -371,7 +371,7 @@ class SceneSwitcher extends IPSModule {
 				if ($scene['Color'] != GetValue($this->ReadPropertyInteger("TargetColorVariableId")) ) {
 					
 					$this->LogMessage("Adjusting Color to value " . $scene['Color'], "DEBUG");
-					RequestAction($this->ReadPropertyInteger("TargetColorVariableId"), $scene['Color']);
+					$this->RequestActionWithBackOff($this->ReadPropertyInteger("TargetColorVariableId"), $scene['Color']);
 				}
 				else {
 					
@@ -396,7 +396,7 @@ class SceneSwitcher extends IPSModule {
 				if ($scene['Intensity'] != GetValue($this->ReadPropertyInteger("TargetIntensityVariableId")) ) {
 					
 					$this->LogMessage("Adjusting Intensity to value " . $scene['Intensity'], "DEBUG");
-					RequestAction($this->ReadPropertyInteger("TargetIntensityVariableId"), $scene['Intensity']);
+					$this->RequestActionWithBackOff($this->ReadPropertyInteger("TargetIntensityVariableId"), $scene['Intensity']);
 				}
 				else {
 					
@@ -419,7 +419,7 @@ class SceneSwitcher extends IPSModule {
 			if (! GetValue($this->ReadPropertyInteger("TargetStatusVariableId"))) {
 				
 				$this->LogMessage("Scene requests device to be turned on but it is off. Turning it on","DEBUG");
-				RequestAction($this->ReadPropertyInteger("TargetStatusVariableId"), true);
+				$this->RequestActionWithBackOff($this->ReadPropertyInteger("TargetStatusVariableId"), true);
 			}
 			else {
 					
@@ -766,5 +766,40 @@ class SceneSwitcher extends IPSModule {
 		$htmlText .= '</tbody></table>';
 		
 		SetValue($this->GetIDForIdent("Transition"), $htmlText);
+	}
+	
+	// Version 1.0
+	protected function RequestActionWithBackOff($variable, $value) {
+		
+		$retries = 4;
+		$baseWait = 100;
+		
+		for ($i = 0; $i <= $retries; $i++) {
+			
+			$wait = $baseWait * $i;
+			
+			if ($wait > 0) {
+				
+				$this->LogMessage("Waiting for $wait milliseconds, retry $i of $retries", "DEBUG");
+				IPS_Sleep($wait);
+			}
+			
+			$result = RequestAction($variable, $value);
+			
+			// Return success if executed successfully
+			if ($result) {
+				
+				return true;
+			}
+			else {
+				
+				$this->LogMessage("Switching Variable $variable to Value $value failed, but will be retried", "WARN");
+			}
+			
+		}
+		
+		// return false as switching was not possible after all these times
+		$this->LogMessage("Switching Variable $variable to Value $value failed after $retries retries. Aborting", "CRIT");
+		return false;
 	}
 }
