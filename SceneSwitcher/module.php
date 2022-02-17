@@ -792,9 +792,18 @@ class SceneSwitcher extends IPSModule {
 						'<thead>' .
 							'<th>Step</th>' .
 							'<th>Status</th>'  .
-							'<th>Intensity</th>' .
-							'<th>Color</th>' .
-						'</thead>';
+							'<th>Intensity</th>';
+							
+		if ($transition[$i]['ColorMode'] == 0) {
+		
+			$htmlText .= '<th>Color</th>';
+		}
+		else {
+		
+			$htmlText .= '<th>Color Temperature</th>';
+		}
+						
+		$htmlText .= '</thead>';
 						
 		$htmlText .= '<tbody>';
 		
@@ -807,15 +816,22 @@ class SceneSwitcher extends IPSModule {
 				$transitionStatus = "Off";
 			}
 			
-			$colorDecRed = (($transition[$i]['Color'] >> 16) & 0xFF);
-			$colorDecGreen = (($transition[$i]['Color'] >> 8) & 0xFF);
-			$colorDecBlue = (($transition[$i]['Color']) & 0xFF);
-		
-			$colorHexRed = dechex($colorDecRed);
-			$colorHexGreen = dechex($colorDecGreen);
-			$colorHexBlue = dechex($colorDecBlue);
+			if ($transition[$i]['ColorMode'] == 0) {
 			
-			$colorHex = sprintf("#%02s%02s%02s", $colorHexRed, $colorHexGreen, $colorHexBlue);
+				$colorDecRed = (($transition[$i]['Color'] >> 16) & 0xFF);
+				$colorDecGreen = (($transition[$i]['Color'] >> 8) & 0xFF);
+				$colorDecBlue = (($transition[$i]['Color']) & 0xFF);
+			
+				$colorHexRed = dechex($colorDecRed);
+				$colorHexGreen = dechex($colorDecGreen);
+				$colorHexBlue = dechex($colorDecBlue);
+				
+				$colorHex = sprintf("#%02s%02s%02s", $colorHexRed, $colorHexGreen, $colorHexBlue);
+			}
+			else {
+				
+				$colorHex = $this->convertMiredToRGB($transition[$i]['ColorTemperature']);
+			}
 			
 			if ( (GetValue($this->GetIDForIdent("TransitionStepNumber")) == $i) && GetValue($this->GetIDForIdent("TransitionStatus") ) ) {
 				
@@ -836,9 +852,16 @@ class SceneSwitcher extends IPSModule {
 							'<td>' .
 								$transition[$i]['Intensity'] .
 							'</td>' .
-							'<td bgcolor="' . $colorHex . '">' .
-								$transition[$i]['Color'] . ' / ' . $colorHex .
-							'</td>' .
+							'<td bgcolor="' . $colorHex . '">';
+								if ($transition[$i]['ColorMode'] == 0) {
+									
+									$htmlText .= $transition[$i]['Color'] . ' / ' . $colorHex;
+								}
+								else {
+									
+									$htmlText .= $transition[$i]['ColorTemperature'] . ' / ' . $colorHex;
+								}
+			$htmlText .=		'</td>' .
 						'</tr>';
 		}
 		
@@ -880,5 +903,26 @@ class SceneSwitcher extends IPSModule {
 		// return false as switching was not possible after all these times
 		$this->LogMessage("Switching Variable $variable to Value $value failed after $retries retries. Aborting", "CRIT");
 		return false;
+	}
+	
+	protected function convertMiredToRGB($mired) {
+	
+		// Convert Mired to Kelvin
+		$kelvin = 1000000 / $mired;
+	
+		// Now we convert kelvin to RGB
+		$kelvin = $kelvin / 100;
+		if ($kelvin < 66) {
+			
+			$red = 255;
+			$green = max(min(round(99.4708025861 * log($kelvin) - 161.1195681661), 255), 0);
+			$blue = $kelvin <= 19 ? 0 : max(min(round(138.5177312231 * log($kelvin - 10) - 305.0447927307), 255), 0);
+		} else {
+			$red = max(min(round(329.698727446 * (($kelvin - 60) ^ -0.1332047592)), 255), 0);
+			$green = max(min(round(288.1221695283 * (($kelvin - 60) ^ -0.0755148492)), 255), 0);
+			$blue = 255;
+		}
+	
+		return Array(red=>$red, green=>$green, blue=>$blue, hex=>sprintf("#%02x%02x%02x", $red, $green, $blue));
 	}
 }
