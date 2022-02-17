@@ -657,7 +657,9 @@ class SceneSwitcher extends IPSModule {
 		$currentStep = Array(
 			"Status" => $transition[$stepNumber]['Status'],
 			"Intensity" => $transition[$stepNumber]['Intensity'],
-			"Color" => $transition[$stepNumber]['Color']
+			"Color" => $transition[$stepNumber]['Color'],
+			"ColorMode" => $transition[$stepNumber]['ColorMode'],
+			"ColorTemperature" => $transition[$stepNumber]['ColorTemperature']
 		);
 		
 		return $currentStep;
