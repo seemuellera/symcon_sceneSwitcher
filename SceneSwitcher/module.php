@@ -130,6 +130,20 @@ class SceneSwitcher extends IPSModule {
 				"width" => "150px",
 				"edit" => Array("type" => "ValidationTextBox"),
 				"add" => ""
+			),
+			Array(
+				"caption" => "Color Temperature Mode",
+				"name" => "ColorTemperatureMode",
+				"width" => "50px",
+				"edit" => Array("type" => "CheckBox"),
+				"add" => false
+			),
+			Array(
+				"caption" => "Color Temperature",
+				"name" => "Color",
+				"width" => "150px",
+				"edit" => Array("type" => "NumberSpinner"),
+				"add" => 0
 			)
 		);
 		$form['elements'][] = Array(
