@@ -384,7 +384,7 @@ class SceneSwitcher extends IPSModule {
 		// Check for color temperature mode
 		if ($this->ReadPropertyInteger("TargetColorModeVariableId")) {
 		
-			if ($scene['ColorMode'] != GetValue("TargetColorModeVariableId") ) {
+			if ($scene['ColorMode'] != GetValue($this->ReadPropertyInteger("TargetColorModeVariableId")) ) {
 				
 				$this->LogMessage("Adjusting Color Temperature Mode to value " . $scene['ColorMode'], "DEBUG");
 				$this->RequestActionWithBackOff($this->ReadPropertyInteger("TargetColorModeVariableId"), $scene['ColorMode']);
