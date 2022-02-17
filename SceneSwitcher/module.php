@@ -923,6 +923,6 @@ class SceneSwitcher extends IPSModule {
 			$blue = 255;
 		}
 	
-		return Array(red=>$red, green=>$green, blue=>$blue, hex=>sprintf("#%02x%02x%02x", $red, $green, $blue));
+		return Array("red"=>$red, "green"=>$green, "blue"=>$blue, "hex"=>sprintf("#%02x%02x%02x", $red, $green, $blue));
 	}
 }
