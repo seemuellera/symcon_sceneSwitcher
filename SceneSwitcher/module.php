@@ -832,7 +832,7 @@ class SceneSwitcher extends IPSModule {
 			}
 			else {
 				
-				$colorHex = $this->convertMiredToRGB($transition[$i]['ColorTemperature'])->hex;
+				$colorHex = $this->convertMiredToRGB($transition[$i]['ColorTemperature'])['hex'];
 			}
 			
 			if ( (GetValue($this->GetIDForIdent("TransitionStepNumber")) == $i) && GetValue($this->GetIDForIdent("TransitionStatus") ) ) {
