@@ -29,6 +29,7 @@ class SceneSwitcher extends IPSModule {
 		$this->RegisterPropertyInteger("TargetColorTemperatureVariableId",0);
 		$this->RegisterPropertyInteger("NextSceneInterval",0);
 		$this->RegisterPropertyBoolean("RepeatOnLastScene",false);
+		$this->RegisterPropertyBoolean("StayOnLastScene",false);
 		$this->RegisterPropertyInteger("TransitionStepInterval",0);
 		$this->RegisterPropertyInteger("TransitionSteps",0);
 		$this->RegisterPropertyString("Scenes","");
@@ -533,8 +534,15 @@ class SceneSwitcher extends IPSModule {
 			}
 			else {
 			
-				$this->LogMessage("Already at last scene. Turning off as repeat is inactive", "DEBUG");
-				$this->TurnOff();
+				$this->LogMessage("Already at last scene. Repeat is inactive", "DEBUG");
+				if ($this->ReadPropertyBoolean("StayOnLastScene")) {
+					
+						$this->LogMessage("Keeping the lights on as stay on last scene is active", "DEBUG");
+				}
+				else {
+					$this->TurnOff();
+					$this->LogMessage("Turning lights off as stay on last scene is inactive", "DEBUG");
+				}
 			}
 		}
 		else {
