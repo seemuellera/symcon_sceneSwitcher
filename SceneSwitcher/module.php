@@ -137,10 +137,10 @@ class SceneSwitcher extends IPSModule {
 			),
 			Array(
 				"caption" => "Color Temperature Mode",
-				"name" => "ColorTemperatureMode",
+				"name" => "ColorMode",
 				"width" => "50px",
-				"edit" => Array("type" => "CheckBox"),
-				"add" => false
+				"edit" => Array("type" => "NumberSpinner"),
+				"add" => 0
 			),
 			Array(
 				"caption" => "Color Temperature",
@@ -381,8 +381,22 @@ class SceneSwitcher extends IPSModule {
 			}
 		}
 		
+		// Check for color temperature mode
+		if ($this->ReadPropertyInteger("TargetColorModeVariableId")) {
+		
+			if ($scene['ColorMode'] != GetValue("TargetColorModeVariableId") ) {
+				
+				$this->LogMessage("Adjusting Color Temperature Mode to value " . $scene['ColorMode'], "DEBUG");
+				$this->RequestActionWithBackOff($this->ReadPropertyInteger("TargetColorModeVariableId"), $scene['ColorMode']);
+			}
+			else {
+					
+				$this->LogMessage("Color Mode is already on the correct level","DEBUG");
+			}
+		}
+		
 		// Setting the color also sets the intensity and turns the device on is needed. So we do this next.
-		if ($scene['Color']) {
+		if ($scene['Color'] && ($scene['ColorMode'] == 0)) {
 			
 			if ($this->ReadPropertyInteger("TargetColorVariableId")) {
 				
@@ -404,6 +418,26 @@ class SceneSwitcher extends IPSModule {
 		else {
 			
 			$this->LogMessage("This Scene has no target color defined", "DEBUG");
+		}
+		
+		if ($scene['ColorTemperature'] && ($scene['ColorMode'] == 1)) {
+			
+			if ($this->ReadPropertyInteger("TargetColorTemperatureVariableId")) {
+				
+				if ($scene['ColorTemperature'] != GetValue($this->ReadPropertyInteger("TargetColorTemperatureVariableId")) ) {
+					
+					$this->LogMessage("Adjusting Color Temperature to value " . $scene['ColorTemperature'], "DEBUG");
+					$this->RequestActionWithBackOff($this->ReadPropertyInteger("TargetColorTemperatureVariableId"), $scene['ColorTemperature']);
+				}
+				else {
+					
+					$this->LogMessage("Color Temperature is already on the correct level","DEBUG");
+				}
+			}
+			else {
+				
+				$this->LogMessage("Scene asks for a color temperature to be set but no Color Temperature Variable was defined in the instance configuration","ERROR");
+			}
 		}
 		
 		// If no color was defined we proceed with intensity
@@ -582,6 +616,8 @@ class SceneSwitcher extends IPSModule {
 			"Status" => $scenes[$sceneIndex]->Status,
 			"Intensity" => $scenes[$sceneIndex]->Intensity,
 			"Color" => $scenes[$sceneIndex]->Color,
+			"ColorMode" => $scenes[$sceneIndex]->ColorMode,
+			"ColorTemperature" => $scenes[$sceneIndex]->ColorTemperature,
 			"Name" => $scenes[$sceneIndex]->Name,
 			"Number" => $sceneNumber
 		);
@@ -643,6 +679,9 @@ class SceneSwitcher extends IPSModule {
 		$deltaIntensity = $nextScene['Intensity'] - $currentScene['Intensity'];
 		$stepsizeIntensity = $deltaIntensity / $transitionSteps;
 		
+		$deltaColorTemperature = $nextScene['ColorTemperature'] - $currentScene['ColorTemperature'];
+		$stepsizeColorTemperature = $deltaColorTemperature / $transitionSteps;
+		
 		$currentSceneColorRed = (($currentScene['Color'] >> 16) & 0xFF); 
 		$currentSceneColorGreen=(($currentScene['Color'] >> 8) & 0xFF); 
 		$currentSceneColorBlue=(($currentScene['Color']) & 0xFF); 
@@ -658,12 +697,6 @@ class SceneSwitcher extends IPSModule {
 		$transition[0]['Status'] = $currentScene['Status'];
 		$transition[0]['Intensity'] = $currentScene['Intensity'];
 		$transition[0]['Color'] = $currentScene['Color'];
-		if ($this->ReadPropertyBoolean('DebugOutput')) {
-		
-			$transition[0]['Color_Red'] = $currentSceneColorRed;
-			$transition[0]['Color_Green'] = $currentSceneColorGreen;
-			$transition[0]['Color_Blue'] = $currentSceneColorBlue;
-		}
 			
 		for ($i=1; $i < $transitionSteps; $i++) {
 			
@@ -687,7 +720,28 @@ class SceneSwitcher extends IPSModule {
 				$transition[$i]['Status'] = true;
 			}
 			
+			if ($currentScene['ColorMode'] && $nextScene['ColorMode']) {
+				
+				$transition[$i]['ColorMode'] = true;
+			}
+			
+			if ( (! $currentScene['ColorMode']) && (! $nextScene['ColorMode']) ) {
+				
+				$transition[$i]['ColorMode'] = false;
+			}
+			
+			if ( (! $currentScene['ColorMode']) && $nextScene['ColorMode']) {
+				
+				$transition[$i]['ColorMode'] = false;
+			}
+			
+			if ($currentScene['ColorMode'] && (! $nextScene['ColorMode']) ) {
+				
+				$transition[$i]['ColorMode'] = true;
+			}
+			
 			$transition[$i]['Intensity'] = round($currentScene['Intensity'] + ($stepsizeIntensity * $i) );
+			$transition[$i]['ColorTemperature'] = round($currentScene['ColorTemperature'] + ($stepsizeColorTemperature * $i) );
 			
 			$factor = $i / $transitionSteps;
 			
@@ -712,13 +766,9 @@ class SceneSwitcher extends IPSModule {
 		$transition[$transitionSteps]['Status'] = $nextScene['Status'];
 		$transition[$transitionSteps]['Intensity'] = $nextScene['Intensity'];
 		$transition[$transitionSteps]['Color'] = $nextScene['Color'];	
-		if ($this->ReadPropertyBoolean('DebugOutput')) {
-		
-			$transition[$transitionSteps]['Color_Red'] = $nextSceneColorRed;
-			$transition[$transitionSteps]['Color_Green'] = $nextSceneColorGreen;
-			$transition[$transitionSteps]['Color_Blue'] = $nextSceneColorBlue;
-		}
-		
+		$transition[$transitionSteps]['ColorMode'] = $nextScene['ColorMode'];	
+		$transition[$transitionSteps]['ColorTemperature'] = $nextScene['ColorTemperature'];	
+				
 		SetValue($this->GetIDForIdent("TransitionJSON"), json_encode($transition));
 		
 	}
