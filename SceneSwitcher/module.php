@@ -144,7 +144,7 @@ class SceneSwitcher extends IPSModule {
 			),
 			Array(
 				"caption" => "Color Temperature",
-				"name" => "Color",
+				"name" => "ColorTemperature",
 				"width" => "150px",
 				"edit" => Array("type" => "NumberSpinner"),
 				"add" => 0
