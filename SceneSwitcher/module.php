@@ -708,6 +708,8 @@ class SceneSwitcher extends IPSModule {
 		$transition[0]['Status'] = $currentScene['Status'];
 		$transition[0]['Intensity'] = $currentScene['Intensity'];
 		$transition[0]['Color'] = $currentScene['Color'];
+		$transition[0]['ColorMode'] = $currentScene['ColorMode'];
+		$transition[0]['ColorTemperature'] = $currentScene['ColorTemperature'];
 			
 		for ($i=1; $i < $transitionSteps; $i++) {
 			
