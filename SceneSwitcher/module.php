@@ -78,6 +78,12 @@ class SceneSwitcher extends IPSModule {
 		$newInterval = $this->ReadPropertyInteger("RefreshInterval") * 1000;
 		$this->SetTimerInterval("RefreshInformation", $newInterval);
 		
+		$this->RegisterReference($this->ReadPropertyInteger("TargetStatusVariableId"));
+		$this->RegisterReference($this->ReadPropertyInteger("TargetIntensityVariableId"));
+		$this->RegisterReference($this->ReadPropertyInteger("TargetColorVariableId"));
+		$this->RegisterReference($this->ReadPropertyInteger("TargetColorModeVariableId"));
+		$this->RegisterReference($this->ReadPropertyInteger("TargetColorTemperatureVariableId"));
+		
 		// Diese Zeile nicht löschen
 		parent::ApplyChanges();
 	}
