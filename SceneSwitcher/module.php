@@ -801,8 +801,8 @@ class SceneSwitcher extends IPSModule {
 							'<th>Step</th>' .
 							'<th>Status</th>'  .
 							'<th>Intensity</th>';
-							
-		if ($transition[1]['ColorMode'] == 0) {
+			
+		if ($transition[0]['ColorMode'] == 0) {
 		
 			$htmlText .= '<th>Color</th>';
 		}
