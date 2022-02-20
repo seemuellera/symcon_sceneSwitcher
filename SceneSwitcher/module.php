@@ -798,6 +798,7 @@ class SceneSwitcher extends IPSModule {
 
 			// Set an empty string if there is only a single scene (this has no transitions)
 			SetValue($this->GetIDForIdent("Transition"), "");
+			return;
 		}
 
 		$transition = json_decode(GetValue($this->GetIDForIdent("TransitionJSON")), true);
