@@ -794,6 +794,12 @@ class SceneSwitcher extends IPSModule {
 	
 	protected function RenderTransitionToHtml() {
 		
+		if ($this->GetNumberOfScenes() == 1) {
+
+			// Set an empty string if there is only a single scene (this has no transitions)
+			SetValue($this->GetIDForIdent("Transition"), "");
+		}
+
 		$transition = json_decode(GetValue($this->GetIDForIdent("TransitionJSON")), true);
 		
 		$htmlText = '<table border="1px">' .
