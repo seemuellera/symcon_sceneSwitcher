@@ -87,9 +87,12 @@ class SceneSwitcher extends IPSModule {
 
 		// Clean old message registration
 		$messagesList = $this->GetMessageList();
-		foreach ($messagesList as $currentMessage) {
+		foreach ($messagesList as $currentMessageVarId => $currentMessageIDs) {
 
-			$this->UnregisterMessage($currentMessage, VM_UPDATE);
+			foreach ($currentMessageIDs as $currentMessageID) {
+
+				$this->UnregisterMessage($currentMessageVarId, $currentMessageID);
+			}
 		}
 
 		$this->RegisterReference($this->ReadPropertyInteger("TargetStatusVariableId"));
